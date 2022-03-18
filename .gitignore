@@ -1,0 +1,14 @@
+.DS_Store
+.env/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*/__pycache__/*
+central/__pycache__/
+users/__pycache__/
+test.py
+db_development.sqlite3
+db_production.sqlite3
+local_settings.py
+venv/

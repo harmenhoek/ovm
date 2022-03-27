@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     'central.apps.CentralConfig',
     'users.apps.UsersConfig',
-    'bootstrap5',
+    'logbook.apps.LogbookConfig',
+    'django_bootstrap5',
+    'crispy_bootstrap5',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [

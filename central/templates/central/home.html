@@ -1,36 +1,143 @@
 {% extends "central/base.html" %}
+{% load static %}
+{% block tab1_active %}
+active
+{% endblock tab1_active %}
+
 {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <small class="text-muted">{{ post.date_created|date:"F d, Y" }}</small>
+{% load central_customfilters %}
+
+
+<style>
+     /* Container needed to position the button. Adjust the width as needed */
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* Make the image responsive */
+.container img {
+  width: 100%;
+  height: auto;
+  filter: opacity(80%);
+}
+
+/* Style the button and place it in the middle of the container/image */
+.container .btn_extra {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  font-size: 20px;
+  padding: 3px 6px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 4px 4px 8px 1px rgba(0, 0, 0, 0.4); /* offset-x | offset-y | blur-radius | spread-radius | color */
+  }
+
+.container .btn:hover {
+  background-color: black;
+}
+
+
+</style>
+
+
+<div class="row">
+    <div class="col-lg-3">
+        <div class="card mb-4">
+            <h5 class="card-header">Post {{ current_post.postslug }}</h5>
+            <div class="card-body">
+                {% if current_post %}
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="row">Post</th>
+                            <td>{{ current_post.post_fullname }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Omschrijving</th>
+                            <td>{{ current_post.description|noneto_description }}</td>
+                        </tr>
+                        {% if current_post.manager %}
+                            <tr>
+                                <th scope="row">Manager</th>
+                                <td>{{ current_post.manager }}</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <i>Geen post geselecteerd.</i>
+                {% endif %}
+
             </div>
-            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.post_fullname }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>
-    {% endfor %}
-    {% if is_paginated %}
+        </div>  <!-- class="card" -->
+        <div class="card">
+            <h5 class="card-header">Post {{ current_post.postslug }}</h5>
+            <div class="card-body">
 
-      {% if page_obj.has_previous %}
-        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-      {% endif %}
+                {% if current_post %}
 
-      {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-          <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-          <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-      {% endfor %}
 
-      {% if page_obj.has_next %}
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-      {% endif %}
+                {% for occ, occ_color in current_occupation %}
+                <div class="card mb-3 border-{{ occ_color }}">
+                    <div class="card-header h6 bg-{{ occ_color }} text-white">{{ occ.user.first_name }} {{ occ.user.last_name }}
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <th scope="row">Naam</th>
+                                <td>{{ occ.user.first_name }} {{ occ.user.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tel</th>
+                                <td>{{ occ.user.profile.phonenumber|nonetounknown }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Planning</th>
+                                <td>{{ occ.shift.shiftstart|date:"G:i" }} - {{ occ.shift.shiftend|date:"G:i" }} </td>
+                            </tr>
+                            {% if occ.user.profile.description %}
+                            <tr>
+                                <th scope="row">Opmerking</th>
+                                <td>{{ occ.user.profile.description }}</td>
+                            </tr>
+                            {% endif %}
 
-    {% endif %}
+                            </tbody>
+                        </table>
+                        <!--                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% else %}
+                <i>Geen post geselecteerd.</i>
+                {% endif %}
+
+            </div>
+        </div>  <!-- class="card" -->
+    </div> <!-- class="col-lg-3" -->
+    <div class="col-lg-9">
+        <div class="card p-0">
+            <h5 class="card-header">Postenkaart</h5>
+            <div class="card-body m-0 p-0">
+                <div class="container">
+                    <img src="{% static 'central/postmap_1.jpg' %}" class="w-100" alt="postmap">
+                    {% for post in posts %}
+
+
+                    <a href="{% url 'post-detail' post.postslug %}"
+                       class="btn btn-{{ status|get_item:post.pk|nonetosecondary }} btn_extra" role="button"
+                       style="top: {{ post.maplocation_y }}%; left: {{ post.maplocation_x }}%;">{{ post.postslug }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock content %}

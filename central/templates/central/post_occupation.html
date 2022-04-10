@@ -1,0 +1,71 @@
+ <h5 class="card-header">Bezetting post {{ current_post.postslug }}</h5>
+            <div class="card-body">
+<div hx-get="{% url 'post-occupation' current_post.postslug %}" hx-trigger="every 30s">
+{{ current_occupation.1 }}
+{% for occ, occ_color in current_occupation %}
+                <div class="card mb-3 border-{{ occ_color }}">
+                    <div class="card-header h6 bg-{{ occ_color }} text-white">{{ occ.user.first_name }} {{ occ.user.last_name }}
+
+                        {% if occ.confirmed %}
+                            <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Verwijderen van post">
+                            <i class="fas fa-trash" style="cursor: pointer"
+                               onclick="showCustomer(gourl='{% url 'planning-remove' occ.pk 0 %}', okurl='{% url 'planning-remove' occ.pk 1 %}')"
+                               data-bs-toggle="modal" data-bs-target="#exampleModal" data-header="{{ occ.user.first_name }} {{ occ.user.last_name }} van post verwijderen"
+                               data-btn2value="Verwijderen" data-btn2class="btn-danger"></i>
+                         </div>
+                        {% else %}
+                         <div class="float-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Bevestigen op post">
+                            <i class="fas fa-check" style="cursor: pointer"
+                               onclick="showCustomer(gourl='{% url 'planning-approve' occ.pk 0 %}', okurl='{% url 'planning-approve' occ.pk 1 %}')"
+                               data-bs-toggle="modal" data-bs-target="#exampleModal" data-header="{{ occ.user.first_name }} {{ occ.user.last_name }} op post bevestigen"
+                               data-btn2value="Bevestigen" data-btn2class="btn-success"></i>
+                         </div>
+                        {% endif %}
+                        <div class="float-end mx-2"  data-bs-toggle="tooltip" data-bs-placement="top" title="Bewerken">
+                            <i class="fas fa-edit" style="cursor: pointer"
+                               onclick="showCustomer(gourl='{% url 'planning-modify' occ.pk %}', okurl='')"
+                               data-bs-toggle="modal" data-bs-target="#exampleModal" data-header="{{ occ.user.first_name }} {{ occ.user.last_name }} op post wijzigen"
+                               data-btn2value="Wijzigen" data-btn2class="btn-warning"></i>
+                         </div>
+
+                    </div> <!-- card-header -->
+
+                    <div class="card-body">
+
+
+
+
+
+
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <th scope="row">Naam</th>
+                                <td>{{ occ.user.first_name }} {{ occ.user.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tel</th>
+                                <td>{{ occ.user.profile.phonenumber|nonetounknown|safe }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Planning</th>
+                                <td>{{ occ.shift.shiftstart|date:"G:i" }} - {{ occ.shift.shiftend|date:"G:i" }} </td>
+                            </tr>
+                            {% if occ.user.profile.description %}
+                            <tr>
+                                <th scope="row">Opmerking</th>
+                                <td>{{ occ.user.profile.description }}</td>
+                            </tr>
+                            {% endif %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    {% empty %}
+    <i>Post is onbezet.</i>
+                {% endfor %}
+
+    </div>
+
+            </div>

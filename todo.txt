@@ -1,3 +1,6 @@
 TODO
 - history of items
 - prevent duplicate planning of people
+- user added by
+- security login_required
+- login with email

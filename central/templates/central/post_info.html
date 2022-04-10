@@ -1,0 +1,23 @@
+
+<h5 class="card-header">Info post {{ current_post.postslug }}</h5>
+            <div class="card-body">
+<table class="table">
+    <tbody>
+    <tr>
+        <th scope="row">Post</th>
+        <td>{{ current_post.post_fullname }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Omschrijving</th>
+        <td>{{ current_post.description|noneto_description|safe }}</td>
+    </tr>
+    {% if current_post.manager %}
+        <tr>
+            <th scope="row">Manager</th>
+            <td>{{ current_post.manager }}</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+            </div>
+<div hx-get="{% url 'post-occupation' current_post.postslug %}" hx-trigger="load, every 5s, planningUpdated from:body" hx-target="#postocc"></div>

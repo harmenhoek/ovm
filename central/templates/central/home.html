@@ -43,81 +43,39 @@ active
 </style>
 
 
-<div class="row">
+<div class="row mt-4">
     <div class="col-lg-3">
         <div class="card mb-4">
-            <h5 class="card-header">Post {{ current_post.postslug }}</h5>
-            <div class="card-body">
-                {% if current_post %}
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <th scope="row">Post</th>
-                            <td>{{ current_post.post_fullname }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Omschrijving</th>
-                            <td>{{ current_post.description|noneto_description }}</td>
-                        </tr>
-                        {% if current_post.manager %}
-                            <tr>
-                                <th scope="row">Manager</th>
-                                <td>{{ current_post.manager }}</td>
-                            </tr>
-                        {% endif %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <i>Geen post geselecteerd.</i>
+
+
+                <div id="postinfo">
+                   <h5 class="card-header">Post info</h5>
+                    <div class="card-body">
+                  <i>Geen post geselecteerd.</i>
+                        </div>
+
+              </div>
+
+                {% if current_post %} <!-- make sure initial load is done if current_post is in url-->
+                    <div hx-get="{% url 'post-info' current_post.postslug %}" hx-trigger="load" hx-target="#postinfo"></div>
                 {% endif %}
 
-            </div>
+
         </div>  <!-- class="card" -->
         <div class="card">
-            <h5 class="card-header">Post {{ current_post.postslug }}</h5>
-            <div class="card-body">
-
-                {% if current_post %}
 
 
-                {% for occ, occ_color in current_occupation %}
-                <div class="card mb-3 border-{{ occ_color }}">
-                    <div class="card-header h6 bg-{{ occ_color }} text-white">{{ occ.user.first_name }} {{ occ.user.last_name }}
-                    </div>
+
+              <div id="postocc">
+                   <h5 class="card-header">Post bezetting</h5>
                     <div class="card-body">
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <th scope="row">Naam</th>
-                                <td>{{ occ.user.first_name }} {{ occ.user.last_name }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Tel</th>
-                                <td>{{ occ.user.profile.phonenumber|nonetounknown }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Planning</th>
-                                <td>{{ occ.shift.shiftstart|date:"G:i" }} - {{ occ.shift.shiftend|date:"G:i" }} </td>
-                            </tr>
-                            {% if occ.user.profile.description %}
-                            <tr>
-                                <th scope="row">Opmerking</th>
-                                <td>{{ occ.user.profile.description }}</td>
-                            </tr>
-                            {% endif %}
+                  <i>Geen post geselecteerd.</i>
+                        </div>
 
-                            </tbody>
-                        </table>
-                        <!--                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
-                    </div>
-                </div>
-                {% endfor %}
+              </div>
 
-                {% else %}
-                <i>Geen post geselecteerd.</i>
-                {% endif %}
 
-            </div>
+
         </div>  <!-- class="card" -->
     </div> <!-- class="col-lg-3" -->
     <div class="col-lg-9">
@@ -126,18 +84,50 @@ active
             <div class="card-body m-0 p-0">
                 <div class="container">
                     <img src="{% static 'central/postmap_1.jpg' %}" class="w-100" alt="postmap">
-                    {% for post in posts %}
 
+                    <div hx-get="{% url 'post-map' %}" hx-trigger="load, every 30s">
 
-                    <a href="{% url 'post-detail' post.postslug %}"
-                       class="btn btn-{{ status|get_item:post.pk|nonetosecondary }} btn_extra" role="button"
-                       style="top: {{ post.maplocation_y }}%; left: {{ post.maplocation_x }}%;">{{ post.postslug }}</a>
-                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalhtmx" -->
+    <!-- hx-target defines where to inject je content (modal dialog) -->
+<button type="button" hx-get="{% url 'planning-add' %}" hx-target="#dialoghtmx"  class="btn btn-primary">Add planning</button>
+
+<!-- Button trigger modal -->
+<!--<button hx-get="{% url 'planning-modify' 1 %}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">-->
+<!--  Launch demo modal DEMO-->
+<!--</button>-->
+
+
+<!-- Button trigger modal -->
+<!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalhtmx">-->
+<!--  BOOTSTRAP EXAMPLE-->
+<!--</button>-->
+
+
+
+
 
 {% endblock content %}
+
+{% block modal %}
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel"></h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div id="txtHint"></div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+    <a href="#" id="modal_approve_btn" class="modal-btn2 btn"></a> <!-- value and class added via js on base.html -->
+</div>
+
+
+
+{% endblock modal %}

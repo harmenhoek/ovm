@@ -1,0 +1,26 @@
+{% extends "central/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% load central_customfilters %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Persoon toevoegen</h1>
+
+</div>
+
+<div class="row">
+    <div class="col-12">
+      <form method="POST" enctype="multipart/form-data">
+           {% csrf_token %}
+           <fieldset class="form-group">
+               {{ form|crispy }}
+           </fieldset>
+           <div class="form-group">
+               <button class="btn btn-primary mt-3" type="submit">Opslaan</button>
+           </div>
+       </form>
+    </div>
+</div>
+
+
+{% endblock content %}

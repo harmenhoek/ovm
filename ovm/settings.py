@@ -145,3 +145,5 @@ LOGIN_URL = 'login'
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 # EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+
+AUTH_USER_MODEL = 'users.CustomUser'

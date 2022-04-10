@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 from django.urls import reverse
 
 class Flag(models.Model):
@@ -14,7 +15,7 @@ class Flag(models.Model):
 
 class Post(models.Model):
     post_fullname = models.CharField(max_length=100, null=True, blank=True)
-    postslug = models.SlugField(max_length=5, null=True, blank=True)
+    postslug = models.SlugField(max_length=5, null=True, blank=True, unique=True)
     maplocation_x = models.FloatField(null=True, blank=True, default=0)
     maplocation_y = models.FloatField(null=True, blank=True, default=0)
     description = models.TextField(null=True, blank=True)
@@ -61,8 +62,11 @@ class Planning(models.Model):
     customstart = models.TimeField(null=True, blank=True)
     customend = models.TimeField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_created_by')
     confirmed = models.BooleanField(default=False)
-    remove = models.BooleanField(default=False)
+    confirmed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_confirmed_by')
+    removed = models.BooleanField(default=False)
+    removed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_removed_by')
 
     def __str__(self):
         return f"{self.post} - {self.shift.shiftname} | {self.user}  - confirmed: {self.confirmed}"

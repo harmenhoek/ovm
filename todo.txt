@@ -3,4 +3,14 @@ TODO
 - prevent duplicate planning of people
 - user added by
 - security login_required
-- login with email
+- exlude users from adding to post, if already on post
+- Upload post-map after adding/confirming/deleting/modifying
+- before confirming, ensure user is not onother post
+- if active menu header
+- User modify
+- planning
+- logbook modals
+
+Plan of approach:
+- make shift obsolete, just use for date and time.
+- make js selectorbox.

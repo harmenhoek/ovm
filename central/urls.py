@@ -24,10 +24,11 @@ urlpatterns = [
     path('user/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('user/add/', UserCreateView.as_view(), name='user-add'),
     path('user/<int:pk>/update/', UserUpdateView.as_view(), name='user-update'),
-    path('planning/<int:pk>/approve/<int:confirmed>', views.planning_approve, name='planning-approve'),
-    path('planning/<int:pk>/remove/<int:confirmed>', views.planning_remove, name='planning-remove'),
+    path('planning/<int:pk>/approve/', views.planning_approve, name='planning-approve'),
+    path('planning/<int:pk>/remove/', views.planning_remove, name='planning-remove'),
     path('planning/<int:pk>/modify/', views.planning_modify, name='planning-modify'),
-    path('planning/add/', views.planning_add, name='planning-add'),
+    path('planning/add/<int:pk>/', views.planning_add_dashboard, name='planning-add'),
+    path('planning/add/', views.planning_add_dashboard, name='planning-add'),
     # path('planning/<int:pk>/modify/', PlanningModify.as_view(), name='planning-modify'),
 
  ]

@@ -10,13 +10,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    {# Load CSS and JavaScript #}
-    {% bootstrap_css %}
 
     <!--  DataTables CSS  -->
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/v/bs4/dt-1.10.23/b-1.6.5/b-colvis-1.6.5/b-print-1.6.5/r-2.2.7/datatables.min.css"/>
-    <!--    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">-->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap5.min.css">
 
     <!--    Bootstrap icons -->
@@ -59,67 +56,11 @@
 </svg>
 
 
+
+
 </head>
-<!--<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>-->
 <body>
 
-
-<!--  <header>-->
-<!--    <div class="px-3 py-2 bg-dark text-white fixed-top">-->
-<!--      <div class="container ">-->
-<!--        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">-->
-<!--          <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">-->
-<!--            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>-->
-<!--          </a>-->
-
-<!--          <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">-->
-<!--            <li>-->
-<!--              <a href="#" class="nav-link text-secondary">-->
-<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#home"/></svg>-->
-<!--                Home-->
-<!--              </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--              <a href="#" class="nav-link text-white">-->
-<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#speedometer2"/></svg>-->
-<!--                Dashboard-->
-<!--              </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--              <a href="#" class="nav-link text-white">-->
-<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#table"/></svg>-->
-<!--                Orders-->
-<!--              </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--              <a href="#" class="nav-link text-white">-->
-<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#grid"/></svg>-->
-<!--                Products-->
-<!--              </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--              <a href="#" class="nav-link text-white">-->
-<!--                <svg class="bi d-block mx-auto mb-1" width="24" height="24"><use xlink:href="#people-circle"/></svg>-->
-<!--                Customers-->
-<!--              </a>-->
-<!--            </li>-->
-<!--          </ul>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="px-3 py-2 border-bottom mb-3">-->
-<!--      <div class="container d-flex flex-wrap justify-content-center">-->
-<!--        <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto">-->
-<!--          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">-->
-<!--        </form>-->
-
-<!--        <div class="text-end">-->
-<!--          <button type="button" class="btn btn-light text-dark me-2">Login</button>-->
-<!--          <button type="button" class="btn btn-primary">Sign-up</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </header>-->
 
 <header>
 
@@ -127,7 +68,7 @@
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Opwekking Verkeer Manager 2</a>
+    <a class="navbar-brand" href="{% url 'central-home' %}">Opwekking Verkeer Manager 2</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -192,84 +133,8 @@
 
 
     {% block content %}{% endblock %}
-
-
-<div class="bg-light border rounded-3">
-        <br><br><br><br><br><br><br><br><br><br>
-      </div>
-
-
-
 </main>
 
-
-
-<!--<div class="container-fluid">-->
-
-<!--  <div class="row">-->
-<!--    <nav id="sidebarMenu" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse">-->
-<!--      <div class="position-sticky pt-3">-->
-<!--        <ul class="nav flex-column">-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link active" aria-current="page" href="">-->
-<!--                 Dashboard-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="">-->
-<!--              <span data-feather="file"></span>-->
-<!--               Personen-->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="{% url 'logbook' %}">-->
-<!--              -->
-<!--            </a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">-->
-<!--              <span data-feather="users"></span>-->
-<!--              <i class="fas fa-calendar-alt"></i> Planning-->
-<!--            </a>-->
-<!--          </li>-->
-<!--        </ul>-->
-<!--<hr>-->
-<!--        <div class="dropdown">-->
-<!--            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"-->
-<!--               id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">-->
-<!--                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">-->
-<!--                <strong>{{ user.first_name }} {{ user.last_name }}</strong>-->
-<!--            </a>-->
-<!--            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">-->
-<!--                <li><a class="dropdown-item" href="#">Settings</a></li>-->
-<!--                <li><a class="dropdown-item" href="#">Profile</a></li>-->
-<!--                <li>-->
-<!--                    <hr class="dropdown-divider">-->
-<!--                </li>-->
-<!--                <li><a class="dropdown-item" href="#">Sign out</a></li>-->
-<!--            </ul>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </nav>-->
-
-<!--    <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">-->
-
-
-<!--      {% if messages %}-->
-<!--        {% for message in messages %}-->
-<!--        <div class="alert alert-{{ message.tags }}" role="alert">-->
-<!--            {{ message|safe }}-->
-<!--        </div>-->
-<!--        {% endfor %}-->
-<!--    {% endif %}-->
-
-<!--        -->
-
-
-<!--    </main>-->
-<!--  </div>-->
-
-<!--</div>-->
 
 {% block footer %}
 <footer class="mt-5 pt-3 pb-0 mb-3 text-muted text-center text-small border-top">
@@ -279,18 +144,6 @@
             class="fas fa-external-link-alt fa-xs" style="vertical-align: +20%"></i></a></small>
 </footer>
 {% endblock footer %}
-
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-        {% block modal %}{% endblock modal %}
-    </div>
-  </div>
-</div>
 
 
 <div id="modalhtmx" class="modal fade" tabindex="-1">
@@ -303,51 +156,31 @@
 
 
 
-<script>
-function showCustomer() {
-    $('#modal_approve_btn').attr('href', okurl);
-  var xhttp;
-
-  xhttp = new XMLHttpRequest(gourl);
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("txtHint").innerHTML = this.responseText;
-    }
-  };
-
-  xhttp.open("GET", gourl, true);
-  xhttp.send();
-}
-
-$('#exampleModal').on('show.bs.modal', function (event) {
-  var button = $(event.relatedTarget) // Button that triggered the modal
-  var recipient = button.data('header') // Extract info from data-* attributes
-  var btn2value = button.data('btn2value')
-  var btn2class = button.data('btn2class')
-  var modal = $(this)
-  modal.find('.modal-title').text(recipient)
-  modal.find('.modal-btn2').text(btn2value)
-  modal.find('.modal-btn2').addClass(btn2class)
-
-  //modal.find('.modal-body input').val(recipient)
-})
-</script>
 
 
+{% bootstrap_javascript %}
 
+<!--<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js" crossorigin="anonymous"></script>-->
+
+<!-- Datatables -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
         crossorigin="anonymous"></script>
 
-{% bootstrap_javascript %}
+<script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+			  integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY="
+			  crossorigin="anonymous"></script>
 
 
-<!-- Datatables -->
-<script type="text/javascript"
-        src="https://cdn.datatables.net/v/bs4/dt-1.10.23/b-1.6.5/b-colvis-1.6.5/b-print-1.6.5/r-2.2.7/datatables.min.js"></script>
-<!--    <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>-->
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.23/b-1.6.5/b-colvis-1.6.5/b-print-1.6.5/r-2.2.7/datatables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap5.min.js" crossorigin="anonymous"></script>
+
+
+
+
+
+
 
 <script>
     $(function () {
@@ -393,6 +226,9 @@ $( document ).ready(function() {
 });
 
 </script>
+
+
+
 
 
 </body>

@@ -85,7 +85,7 @@ active
                 <div class="container">
                     <img src="{% static 'central/postmap_1.jpg' %}" class="w-100" alt="postmap">
 
-                    <div hx-get="{% url 'post-map' %}" hx-trigger="load, every 30s">
+                    <div hx-get="{% url 'post-map' %}" hx-trigger="load, every 30s, postmapUpdated from:body">
 
                 </div>
             </div>
@@ -93,41 +93,4 @@ active
     </div>
 </div>
 
-<!-- type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalhtmx" -->
-    <!-- hx-target defines where to inject je content (modal dialog) -->
-<button type="button" hx-get="{% url 'planning-add' %}" hx-target="#dialoghtmx"  class="btn btn-primary">Add planning</button>
-
-<!-- Button trigger modal -->
-<!--<button hx-get="{% url 'planning-modify' 1 %}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">-->
-<!--  Launch demo modal DEMO-->
-<!--</button>-->
-
-
-<!-- Button trigger modal -->
-<!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalhtmx">-->
-<!--  BOOTSTRAP EXAMPLE-->
-<!--</button>-->
-
-
-
-
-
 {% endblock content %}
-
-{% block modal %}
-
-<div class="modal-header">
-    <h5 class="modal-title" id="exampleModalLabel"></h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
-    <div id="txtHint"></div>
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
-    <a href="#" id="modal_approve_btn" class="modal-btn2 btn"></a> <!-- value and class added via js on base.html -->
-</div>
-
-
-
-{% endblock modal %}

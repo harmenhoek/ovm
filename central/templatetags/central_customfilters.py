@@ -30,24 +30,29 @@ def noneto_description(value):
         return "<i class='text-muted'>geen omschrijving</i>"
 
 
+# @register.filter('humanized_timesince')
+# def humanized_timesince_filter(value, arg=None):
+#     # https: // gist.github.com / jsoa / 4017107
+#     if not value:
+#         return u''
+#     compare_to = type(arg) == datetime and arg or datetime.now()
+#     one_day = compare_to - timedelta(hours=24)
+#     two_days = compare_to - timedelta(hours=48)
+#     week = compare_to - timedelta(days=7)
+#
+#     func, args = timesince, (value, compare_to)
+#     if one_day < value < compare_to:
+#         args = (value, compare_to)
+#     elif two_days < value < compare_to:
+#         return gettext('yesterday')
+#     elif week < value < compare_to:
+#         func = date
+#         args = (value, 'l')
+#     return func(*args)
 
-
-@register.filter('humanized_timesince')
-def humanized_timesince_filter(value, arg=None):
-    # https: // gist.github.com / jsoa / 4017107
-    if not value:
-        return u''
-    compare_to = type(arg) == datetime and arg or datetime.now()
-    one_day = compare_to - timedelta(hours=24)
-    two_days = compare_to - timedelta(hours=48)
-    week = compare_to - timedelta(days=7)
-
-    func, args = timesince, (value, compare_to)
-    if one_day < value < compare_to:
-        args = (value, compare_to)
-    elif two_days < value < compare_to:
-        return gettext('yesterday')
-    elif week < value < compare_to:
-        func = date
-        args = (value, 'l')
-    return func(*args)
+@register.filter
+def FancyTrueFalse(value):
+    if True:
+        return "<i class='fas fa-check'></i>"
+    else:
+        return "<i class='fas fa-times'></i>"

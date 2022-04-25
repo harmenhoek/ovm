@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Post, Planning
+from .models import Post, Planning, ShiftTime
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
@@ -19,6 +19,9 @@ from users.forms import UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, FileResponse
+from .forms import ModifyPlanningDashboard, AddPlanningDashboard
+import json
+from datetime import datetime, date
 
 
 class UsersView(LoginRequiredMixin, ListView):
@@ -52,7 +55,8 @@ class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         import unidecode
-        form.instance.username = unidecode.unidecode(f"{form.instance.first_name.lower()}{form.instance.last_name.lower()}").lower().replace(" ", "")
+        # form.instance.username = unidecode.unidecode(f"{form.instance.first_name.lower()}{form.instance.last_name.lower()}").lower().replace(" ", "")
+        form.instance.username = form.instance.email
         response = super(UserCreateView, self).form_valid(form)
         self.object = form.save()
 
@@ -73,149 +77,23 @@ class PostListView(LoginRequiredMixin, ListView):
         return context
 
 def about(request):
-    return render(request, 'central/about.html', {'title': 'About'})
+    shiftstart = list(ShiftTime.objects.all().values_list('timestart'))
+    shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
 
-@login_required
-def planning_approve(request, pk, confirmed):
-    try:
-        plan_item = Planning.objects.get(pk=pk)
-    except:
-        return render(request, 'central/planning_approve.html', {'pk': 'unknown!'})
-
-    if confirmed:
-        plan_item.confirmed = True
-        plan_item.save()
-        messages.success(request, f'{plan_item.user.first_name} {plan_item.user.last_name} bevestigd op post {plan_item.post.postslug}.')
-        return HttpResponseRedirect(reverse("post-detail", kwargs={"postslug": plan_item.post.postslug}))
-    else:
-
-        return render(request, 'central/planning_approve.html', {'plan_item': plan_item})
-
-@login_required
-def planning_remove(request, pk, confirmed):
-    try:
-        plan_item = Planning.objects.get(pk=pk)
-    except:
-        return render(request, 'central/planning_remove.html', {'pk': 'unknown!'})
-
-    if confirmed:
-        plan_item.removed = True
-        plan_item.save()
-        messages.success(request, f'{plan_item.user.first_name} {plan_item.user.last_name} verwijderd op post {plan_item.post.postslug}.')
-        return HttpResponseRedirect(reverse("post-detail", kwargs={"postslug": plan_item.post.postslug}))
-    else:
-
-        return render(request, 'central/planning_remove.html', {'plan_item': plan_item})
-
-#
-# @staff_member_required
-# def planning_modify(request, pk):
-#     try:
-#         plan_item = Planning.objects.get(pk=pk)
-#     except:
-#         return render(request, 'central/planning_form.html', {'pk': 'unknown!'})
-#
-#     # if confirmed:
-#     #     messages.success(request, f'Planning voor {plan_item.user.first_name} {plan_item.user.last_name} op post {plan_item.post.postslug} aangepast.')
-#     #     return HttpResponseRedirect(reverse("post-detail", kwargs={"postslug": plan_item.post.postslug}))
-#     # else:
-#
-#     from central.forms import ModifyPlanningDashboard
-#     if request.method == 'POST':
-#         form = ModifyPlanningDashboard(request.POST)
-#         if form.is_valid():
-#             plan_item.post = form.cleaned_data['post']
-#             plan_item.customstart = form.cleaned_data['customstart']
-#             plan_item.customend = form.cleaned_data['customend']
-#
-#             messages.success(request, f'Planning voor {plan_item.user.first_name} {plan_item.user.last_name} op post {plan_item.post.postslug} aangepast.')
-#             return HttpResponseRedirect(reverse("post-detail", kwargs={"postslug": plan_item.post.postslug}))
-#     else:
-#         form = ModifyPlanningDashboard()
-#         return render(request, 'central/planning_form.html', {'form': form})
-#
-#     # return render(request, 'central/planning_form.html', {'plan_item': plan_item})
-
-# @method_decorator(staff_member_required, name='dispatch')
-# class PlanningModify(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
-#     model = Planning
-#     success_message = "Aangepast."
-#     # success_url =  reverse_lazy("post-detail", kwargs={"postslug": plan_item.post.postslug})
-#     fields = ['post', 'customstart', 'customend', 'shift']
-#     template_name = 'central/planning_form.html'
-#
-#     def get_success_url(self):
-#         return reverse("post-detail", kwargs={"postslug": self.post.postslug})
-
-# @method_decorator(staff_member_required, name='dispatch')
-# class CabinetUpdateView(PermissionRequiredMixin, SuccessMessageMixin, LoginRequiredMixin, UpdateView):
-#     permission_required = 'users.is_itemmoderator'
-#     model = Cabinet
-#     success_message = "Cabinet <b>%(number)s</b> in lab %(lab)s was updated successfully."
-#     success_url = reverse_lazy('manage-cabinets')
-#     fields = ['lab', 'number', 'nickname', 'main_content', 'owner', 'image']
-#     template_name = 'ems_manage/cabinet_form.html'
+    shiftend = list(ShiftTime.objects.all().values_list('timeend'))
+    shiftend = [i[0].strftime("%H:%M") for i in shiftend]
 
 
-# @permission_required('users.is_itemmoderator')
-# def check_assignremove(request, pk):
-#     item = get_object_or_404(Item, pk=pk)
-#
-#     if item.storage_location is None:  # no storage location set, this must be done first before item can be stored.
-#         from ems.forms import AddStorageLocationForm
-#         if request.method == 'POST':
-#             form = AddStorageLocationForm(request.POST)
-#             if form.is_valid():
-#                 item.storage_location = form.cleaned_data['storage_location']
-#         else:
-#             form = AddStorageLocationForm()
-#             return render(request, 'ems/storagelocation_form.html', {'form': form})
-#
-#     messages.success(request,
-#                      f'Item <b>{item.brand} {item.model}</b> (assigned to {item.user} at {item.location}) was <b>unassigned.</b> Make sure it is in storage cabinet <b>{item.storage_location}</b>.')
-#     item.status = True
-#     item.user = None
-#     item.date_return = timezone.now()
-#     item.last_scanned = timezone.now()
-#     item.save()
-#
-#     return HttpResponseRedirect(reverse('manage-check'))
-
-from .forms import ModifyPlanningDashboard
-
-import json
-def planning_modify(request, pk):
-    if request.method == "POST":
-        form = ModifyPlanningDashboard(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponse(status=204)
-    else:
-        form = ModifyPlanningDashboard()
-    return render(request, 'central/planning_form.html', {
-        'form': form,
-    })
-
-from .forms import ModifyPlanningDashboard, AddDay
+    return render(request, 'central/about.html', {'shiftstart': shiftstart, 'shiftend': shiftend})
 
 
 
-def planning_add(request):
-    if request.method == "POST":
-        form = AddDay(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponse(
-                status=204,
-                headers={
-                    'HX-Trigger': json.dumps({
-                        "planningUpdated": None,
-                        "showMessage": f"Day added."
-                    })
-                })
-    else:
-        form = AddDay()
-    return render(request, 'central/planning_form.html', {'form': form})
+
+
+
+
+
+
 
 
 # https://blog.benoitblanchon.fr/django-htmx-modal-form/
@@ -241,23 +119,20 @@ class PostMapView(LoginRequiredMixin, ListView):
 
         # now + overdue
 
-        status_orange = Planning.objects.filter(removed=False, confirmed=True, shift__date__date=datenow,
-                                                shift__shiftstart__lt=datetimenow, shift__shiftend__lt=datetimenow). \
+        status_orange = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
+                                                starttime__lt=datetimenow, endtime__lt=datetimenow). \
             values('post').distinct()
-            # values('post', 'post__postslug', 'shift').annotate(dcount=Count('post')).order_by()
 
         # now + not confirmed (planning)
-        status_blue = Planning.objects.filter(removed=False, confirmed=False, shift__date__date=datenow,
-                                              shift__shiftstart__lt=datetimenow, shift__shiftend__gt=datetimenow). \
+        status_blue = Planning.objects.filter(removed=False, confirmed=False, date=datenow,
+                                              starttime__lt=datetimenow, endtime__gt=datetimenow). \
             exclude(pk__in=status_orange).values('post').distinct()
 
         # now + confirmed
-        status_green = Planning.objects.filter(removed=False, confirmed=True, shift__date__date=datenow,
-                                               shift__shiftstart__lt=datetimenow, shift__shiftend__gt=datetimenow).\
+        status_green = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
+                                               starttime__lt=datetimenow, endtime__gt=datetimenow).\
             exclude(pk__in=status_orange | status_blue).values('post').distinct()
 
-        # TODO in near future
-        # TODO include extra time from shift
 
         status_orange_2 = [{i['post']: 'warning'} for i in status_orange]
         status_blue_2 = [{i['post']: 'primary'} for i in status_blue]
@@ -296,16 +171,16 @@ class PostOccupationView(LoginRequiredMixin, ListView):
 
         occ_orange = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                              confirmed=True,
-                                             shift__shiftstart__lt=datetimenow, shift__shiftend__lt=datetimenow,
-                                             shift__date__date=datenow)
+                                             starttime__lt=datetimenow, endtime__lt=datetimenow,
+                                             date=datenow)
         occ_blue = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                            confirmed=False,
-                                           shift__shiftstart__lt=datetimenow, shift__shiftend__gt=datetimenow,
-                                           shift__date__date=datenow)
+                                           starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                           date=datenow)
         occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                             confirmed=True,
-                                            shift__shiftstart__lt=datetimenow, shift__shiftend__gt=datetimenow,
-                                            shift__date__date=datenow)
+                                            starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                           date=datenow)
         occ = occ_orange | occ_blue | occ_green
         occ_color = ["warning" for i in range(occ_orange.count())] + \
                     ["primary" for i in range(occ_blue.count())] + \
@@ -320,3 +195,107 @@ class PostInfoView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = 'postslug'
     slug_field = 'postslug'
     context_object_name = 'current_post'
+
+
+@login_required
+def planning_approve(request, pk):
+    plan_item = Planning.objects.get(pk=pk)
+
+    if request.method == "POST":
+        plan_item.confirmed = True
+        plan_item.confirmed_by = request.user
+        plan_item.save()
+        return HttpResponse(
+            status=204,
+            headers={
+                'HX-Trigger': json.dumps({
+                    "planningUpdated": None,
+                    "postmapUpdated": None,
+                    "showMessage": f"Planning bevestigd."
+                })
+            })
+
+    return render(request, 'central/planningapprove_form.html')
+
+@login_required
+def planning_remove(request, pk):
+    plan_item = Planning.objects.get(pk=pk)
+
+    if request.method == "POST":
+        plan_item.removed = True
+        plan_item.removed_by = request.user
+        plan_item.save()
+        return HttpResponse(
+            status=204,
+            headers={
+                'HX-Trigger': json.dumps({
+                    "planningUpdated": None,
+                    "postmapUpdated": None,
+                    "showMessage": f"Planning verwijderd."
+                })
+            })
+
+    return render(request, 'central/planningremove_form.html')
+
+@login_required
+def planning_add_dashboard(request, pk='None'):
+    if request.method == "POST":
+        form = AddPlanningDashboard(request.POST)
+        if form.is_valid():
+            new_planning = form.save()
+            new_planning.date = date.today()
+            new_planning.confirmed = True
+            new_planning.created_by = request.user
+            new_planning.confirmed_by = request.user
+            new_planning.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    'HX-Trigger': json.dumps({
+                        "planningUpdated": None,
+                        "postmapUpdated": None,
+                        "showMessage": f"Planning added."
+                    })
+                })
+        return render(request, 'central/planningadd_form.html', {'form': form})
+    else:
+        # send extra context for slider
+        shiftstart = list(ShiftTime.objects.all().values_list('timestart'))
+        shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
+        shiftend = list(ShiftTime.objects.all().values_list('timeend'))
+        shiftend = [i[0].strftime("%H:%M") for i in shiftend]
+
+        if pk:
+            form = AddPlanningDashboard(initial={'post': str(pk)})
+        else:
+            form = AddPlanningDashboard()
+
+        return render(request, 'central/planningadd_form.html', {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend})
+
+
+
+@login_required
+def planning_modify(request, pk):
+    plan_item = get_object_or_404(Planning, pk=pk)
+
+    if request.method == "POST":
+        form = ModifyPlanningDashboard(request.POST, instance=plan_item)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    'HX-Trigger': json.dumps({
+                        "planningUpdated": None,
+                        "postmapUpdated": None,
+                        "showMessage": f"Planning modified."
+                    })
+                })
+
+    else:
+        form = ModifyPlanningDashboard(instance=plan_item)
+
+    return render(request, 'central/planningmodify_form.html', {
+        'form': form,
+    })

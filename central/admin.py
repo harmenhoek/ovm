@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Post, Day, Shift, Planning
+from .models import Post, ShiftDay, ShiftTime, Planning
 
 # Register your models here.
 admin.site.register(Post)
-admin.site.register(Day)
-admin.site.register(Shift)
+admin.site.register(ShiftDay)
+admin.site.register(ShiftTime)
 admin.site.register(Planning)

@@ -1,77 +1,73 @@
-{% extends "central/base.html" %}
 {% block content %}
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">{{ object.first_name }} {{ object.last_name }}</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            This week
-          </button>
-        </div>
-      </div>
+<div class="modal-header">
+    <h5 class="modal-title">{{ object.first_name }} {{ object.last_name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
-<div class="row">
-    <div class="col-12">
-        <div class="float-start my-2">
-            <a class="btn btn-sm btn-secondary" href="{% url 'user-update' object.pk %}"><i class="fas fa-cog"></i> Bewerken</a>
-        </div>
-    </div> <!-- col-12 -->
+</div>
 
-    <div class="col-6">
+<div class="modal-body">
+    <table class="table">
+        <tbody>
 
-        <table class="table">
-            <tbody>
+            {% if object.image.name != "default.jpg" %}
                 <tr>
-                    <th scope="row">ID</th>
-                    <td>{{ object.pk }}</td>
+                    <th scope="row"></th>
+                    <td><img class="rounded mr-0 w-100" src="{{ object.image.url }}"> </td>
                 </tr>
-                <tr>
-                    <th scope="row">Voornaam</th>
-                    <td>{{ object.first_name }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Achternaam</th>
-                    <td>{{ object.last_name }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Gebruikersnaam</th>
-                    <td>{{ object.username }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Geboortedatum</th>
-                    <td>{{ object.dateofbirth }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Telefoonnummer</th>
-                    <td>{{ object.phonenumber }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Verkeersregelaar</th>
-                    <td>{{ object.verkeersregelaar }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Centralist</th>
-                    <td>{{ object.centralist }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Toegevoegd op</th>
-                    <td>{{ object.date_created }}</td>
-                </tr>
-                <tr>
-                    <th scope="row">Omschrijving</th>
-                    <td>{{ object.description }}</td>
-                </tr>
+            {% endif %}
+            <tr>
+                <th scope="row">ID</th>
+                <td>{{ object.pk }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Voornaam</th>
+                <td>{{ object.first_name }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Achternaam</th>
+                <td>{{ object.last_name }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Gebruikersnaam</th>
+                <td>{{ object.username }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Geboortedatum</th>
+                <td>{{ object.dateofbirth|nonetounknown|safe }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Telefoonnummer</th>
+                <td>{{ object.phonenumber|nonetounknown|safe }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Verkeersregelaar</th>
+                <td>{{ object.verkeersregelaar|FancyTrueFalse|safe }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Centralist</th>
+                <td>{{ object.centralist|FancyTrueFalse|safe }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Toegevoegd op</th>
+                <td>{{ object.date_created|date:'d-m-Y H:i'  }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Omschrijving</th>
+                <td>{{ object.description }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<div class="modal-footer">
+<!--    url 'user-update' object.pk-->
+    <button class="btn btn-primary" type="submit"><i class="fas fa-cog"></i> Bewerken</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+</div>
 
 
-            </tbody>
-        </table>
-    </div>
-</div> <!-- row -->
 
 {% endblock content %}
 

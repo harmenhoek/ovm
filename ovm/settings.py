@@ -38,13 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
+
     'central.apps.CentralConfig',
     'users.apps.UsersConfig',
     'logbook.apps.LogbookConfig',
+
+    "bootstrap4",
+    'crispy_forms',
     'django_bootstrap5',
     'crispy_bootstrap5',
     'phonenumber_field',
+    'bootstrap_datepicker_plus',
 ]
 
 MIDDLEWARE = [
@@ -118,7 +122,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+TIME_ZONE = 'WET'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

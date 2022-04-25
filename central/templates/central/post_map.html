@@ -1,7 +1,6 @@
 {% for post in posts %}
 
 <a hx-get="{% url 'post-info' post.postslug %}" hx-trigger="click" hx-target="#postinfo"
-
    class="btn btn-{{ status|get_item:post.pk|nonetosecondary }} btn_extra" role="button"
    style="top: {{ post.maplocation_y }}%; left: {{ post.maplocation_x }}%;">{{ post.postslug }}</a>
 {% endfor %}

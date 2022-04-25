@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('phonenumber', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None, unique=True)),
                 ('dateofbirth', models.DateField(blank=True, null=True)),
-                ('image', models.ImageField(default='default.jpg', upload_to='profile_pics')),
+                ('image', models.ImageField(default='default.png', upload_to='profile_pics')),
                 ('verkeersregelaar', models.BooleanField(default=False)),
                 ('centralist', models.BooleanField(default=False)),
                 ('date_created', models.DateTimeField(default=django.utils.timezone.now)),
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(default='default.jpg', upload_to='profile_pics')),
+                ('image', models.ImageField(default='default.png', upload_to='profile_pics')),
                 ('phonenumber', phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None, unique=True)),
                 ('dateofbirth', models.DateField(blank=True, null=True)),
                 ('verkeersregelaar', models.BooleanField(default=False)),

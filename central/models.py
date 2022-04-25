@@ -34,7 +34,7 @@ class Post(models.Model):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
 
-class Day(models.Model):
+class ShiftDay(models.Model):
     date = models.DateField()
     dayname = models.CharField(max_length=15)
     active = models.BooleanField(default=True)
@@ -43,30 +43,42 @@ class Day(models.Model):
     def __str__(self):
         return f"{self.dayname} ({self.date})"
 
-class Shift(models.Model):
-    shiftname = models.CharField(max_length=10)
-    date = models.ForeignKey(Day, on_delete=models.SET_NULL, null=True, blank=True)
-    shiftstart = models.TimeField()
-    shiftend = models.TimeField()
-    shiftstart_extra = models.DurationField()
-    shiftend_extra = models.DurationField()
+class ShiftTime(models.Model):
+    timestart = models.TimeField()
+    timeend = models.TimeField()
+    timename = models.IntegerField(help_text='Number of the shift')
+    active = models.BooleanField(default=True)
+    description = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.shiftname} ({self.date.dayname} {self.shiftstart.strftime('%H:%M')}-{self.shiftend.strftime('%H:%M')})"
+        return f"Shift {self.timename} ({self.timestart} - {self.timeend})"
+
+
+#
+# class Shift(models.Model):  # to be made obsolete!
+#     shiftname = models.CharField(max_length=10)
+#     date = models.ForeignKey(Day, on_delete=models.SET_NULL, null=True, blank=True)
+#     shiftstart = models.TimeField()
+#     shiftend = models.TimeField()
+#     shiftstart_extra = models.DurationField()
+#     shiftend_extra = models.DurationField()
+#
+#     def __str__(self):
+#         return f"{self.shiftname} ({self.date.dayname} {self.shiftstart.strftime('%H:%M')}-{self.shiftend.strftime('%H:%M')})"
 
 
 class Planning(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    customstart = models.TimeField(null=True, blank=True)
-    customend = models.TimeField(null=True, blank=True)
-    comment = models.TextField(null=True, blank=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Post')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Persoon')
+    starttime = models.TimeField(null=True, blank=True, verbose_name='Starttijd')
+    endtime = models.TimeField(null=True, blank=True, verbose_name='Eindtijd')
+    date = models.DateField(null=True, blank=True, verbose_name='Datum')
+    comment = models.TextField(null=True, blank=True, verbose_name='Opmerking(en)')
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_created_by')
-    confirmed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False, verbose_name='Bevestigd')
     confirmed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_confirmed_by')
-    removed = models.BooleanField(default=False)
+    removed = models.BooleanField(default=False, verbose_name='Verwijderd')
     removed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_removed_by')
 
     def __str__(self):
-        return f"{self.post} - {self.shift.shiftname} | {self.user}  - confirmed: {self.confirmed}"
+        return f"{self.post} | {self.user}  - confirmed: {self.confirmed}"

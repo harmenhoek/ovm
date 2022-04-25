@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-12">
         <div class="float-end my-2">
-            <a class="btn btn-sm btn-success" href="{% url 'user-add' %}"><i class="fas fa-plus"></i> Toevoegen</a>
+            <a class="btn btn-sm btn-success" hx-get="{% url 'user-add' %}" hx-trigger="click" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a></a>
         </div>
     </div> <!-- col-12 -->
     <div class="col-12">
@@ -35,7 +35,8 @@
             </thead>
             <tbody>
             {% for user in object_list %}
-            <tr style="cursor:pointer;" onclick="window.location='{% url 'user-detail' user.pk %}';">
+
+            <tr style="cursor:pointer;" hx-get="{% url 'user-detail' user.pk %}" hx-trigger="click" hx-target="#dialoghtmx">
                 <td>{{ user.pk }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.first_name }}</td>

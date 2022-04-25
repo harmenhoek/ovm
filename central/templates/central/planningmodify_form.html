@@ -1,23 +1,23 @@
 {% load crispy_forms_tags %}
 {% block content %}
-{% load central_customfilters %}
 {{ form.media }}
 
 <form hx-post="{{ request.path }}">
     {% csrf_token %}
-
     <div class="modal-header">
-        <h5 class="modal-title">Persoon toevoegen</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        Bezetting bewerken
     </div>
     <div class="modal-body">
+
         {{ form|crispy }}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
-        <button class="btn btn-success" type="submit">Toevoegen</button>
+        <button class="btn btn-success" type="submit">Opslaan</button>
     </div>
 </form>
 
 
+
 {% endblock content %}
+

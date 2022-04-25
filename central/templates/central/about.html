@@ -1,14 +1,103 @@
 {% extends "central/base.html" %}
+{% load static %}
+
 {% block content %}
-    <h1>About Page</h1>
+    <h1>Test Page</h1>
+
+
+
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script> <!-- NEEDED FOR SELECT TO WORK! -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css" />
+
+
+
+
+<script>
+
+    var shiftstart = {{ shiftstart|safe }};
+    var shiftend = {{ shiftend|safe }};
+
+
+    $( document ).ready(function() {
+        var dt = new Date();
+        var time = dt.getHours() + ":" + dt.getMinutes();
+        $('#starttime').val(time);
+
+            // below was meant to find closest starttime, and set slider in that way, never finished.
+        // var dates = ['10:00', '12:00', '16:00', '18:00'];
+        //function timeToSecs(time) {
+        //  let [h, m] = time.split(':');
+        //  return h*3.6e3 + m*60;
+        //}
+        //var temp = shiftstart.map(d => Math.abs(timeToSecs(d)-timeToSecs(time)));
+        //var idx = temp.indexOf(Math.min(...temp));
+        //console.log(shiftstart[idx]);
+        //console.log([idx+1, idx+2])
+
+    });
+
+    function Update_Shifttimes() {
+
+            // below is meant for 2 button slider
+        // var selectedshift = $("input#shifts_range_slider").val().split(',');
+        // var selectedstart = shiftstart[selectedshift[0]-1];
+        // var selectedend = shiftend[selectedshift[1]-1];
+
+        var selectedend = shiftend[$("input#shifts_range_slider").val()-1];
+
+        // $('#starttime').val(selectedstart);
+        $('#endtime').val(selectedend);
+
+
+
+
+    }
+</script>
 
 
 
 
 
 
+<table border="0" style="width: 25%;">
+                        <tr>
 
+                                        <td align='center'>OC</td>
+
+                                        <td align='center'>MV</td>
+
+                                        <td align='center'>ML</td>
+
+                                        <td align='center'>AV</td>
+                                                            </tr>
+                    </table>
+<input style="width: 25%;"
+       onchange="Update_Shifttimes()"
+       id="shifts_range_slider"
+	type="text"
+	name="somename"
+	data-provide="slider"
+	data-slider-ticks="[1, 2, 3, 4]"
+	data-slider-min="1"
+	data-slider-max="4"
+	data-slider-step="1"
+	data-slider-value="4"
+	data-slider-tooltip="hide"
+>
+
+
+<div class="row">
+        <div class="form-group col-lg-3">
+            <label>Begintijd</label>
+            <input class="form-control" style="width:60%" id="starttime" value=""> <!-- <p class="form-control-static">email@example.com</p> -->
+        </div>
+        <div class="form-group col-lg-3">
+            <label>Eindtijd</label>
+            <input class="form-control" style="width:60%" id="endtime" value="">
+        </div>
+    </div>
 
 
 {% endblock content %}
 
+<table border="0" style="width: 100%;"><tr><td align="center">OC</td><td align="center">MV</td><td align="center">ML</td><td align="center">AV</td></tr></table>

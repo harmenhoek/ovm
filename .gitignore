@@ -14,3 +14,4 @@ local_settings.py
 venv/
 todo.txt
 documentation.txt
+*/test.py

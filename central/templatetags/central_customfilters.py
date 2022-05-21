@@ -3,6 +3,23 @@ from django.template.defaulttags import register
 import datetime
 from django.template.defaultfilters import date, timesince
 from django.utils.translation import gettext
+import os
+
+@register.filter
+def checkifimage(value):
+    # input is a file url
+    filename, file_extension = os.path.splitext(value)
+    extensions = ['.jpg', '.png', '.jpeg', '.bmp', '.tiff', '.tif']
+    if file_extension in extensions:
+        return True
+    else:
+        return False
+
+@register.filter
+def filesize(value):
+    """Returns the filesize of the filename given in value"""
+    return os.path.getsize(value)
+
 
 @register.filter
 def get_item(dictionary, key):

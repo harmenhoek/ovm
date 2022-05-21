@@ -5,14 +5,6 @@ from .widgets import DatePickerInput, TimePickerInput, DateTimePickerInput
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
 
-class AddPlanningMain(forms.ModelForm):
-    class Meta:
-        model = Planning
-        fields = ['user', 'post']
-
-    def get_context(self): # this even works?
-        pass
-
 class ModifyPlanningDashboard(forms.ModelForm):
     class Meta:
         model = Planning
@@ -32,7 +24,7 @@ class ModifyPlanningDashboard(forms.ModelForm):
         plan = Planning.objects.filter(user=user,
                                 starttime__lt=datetimenow,
                                 endtime__gt=datetimenow,
-                                date=datenow)
+                                date=datenow, removed=False)
         if plan:
             if plan[0].user.pk is not user.pk: #one extra validation here, since user is already on a post, this one.
                 # we specifically request [0], since there should only be 1 result! We cannot use .get since queryset might return empty
@@ -45,6 +37,15 @@ class ModifyPlanningDashboard(forms.ModelForm):
         if endtime < currenttime:
             raise ValidationError('Geselecteerde tijd ligt niet in de toekomst.')
         return endtime
+
+    def clean(self):
+        cleaned_data = super().clean()
+        endtime = cleaned_data.get('endtime')
+        starttime = cleaned_data.get('starttime')
+        if starttime:  # if modified no starttime is given in the form
+            # check if endtime > starttime
+            if endtime < starttime:
+                raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -97,6 +98,14 @@ class AddPlanningDashboard(forms.ModelForm):
         if endtime < currenttime:
             raise ValidationError('Geselecteerde tijd ligt niet in de toekomst.')
         return endtime
+
+    def clean(self):
+        cleaned_data = super().clean()
+        endtime = cleaned_data.get('endtime')
+        starttime = cleaned_data.get('starttime')
+        # check if endtime > starttime
+        if endtime < starttime:
+            raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

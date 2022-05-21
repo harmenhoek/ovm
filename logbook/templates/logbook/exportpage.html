@@ -1,0 +1,93 @@
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% load django_bootstrap5 %}
+    {% bootstrap_css %}
+
+<script>
+$(document).ready(function() {
+    window.print();
+});
+</script>
+
+
+<!--<script>-->
+<!--$( document ).ready(function() {-->
+<!--    var element = document.getElementById('exportarea');-->
+
+<!--    var opt = {-->
+<!--      margin:       0.5,-->
+<!--      filename:     'export.pdf',-->
+<!--      image:        { type: 'jpeg', quality: 1 },-->
+<!--      html2canvas:  { dpi: 192 , letterRendering: true , useCORS: true, width: 1000, imageTimeout: 0},-->
+<!--      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait', pagesplit: true},-->
+<!--      enableLinks:  false,-->
+<!--      zoom: 0.5-->
+<!--    };-->
+
+<!--    html2pdf().set(opt).from(element).save();-->
+<!--});-->
+<!--</script>-->
+
+
+<body>
+<div id="exportarea" style="width:1000px;">
+
+        <h2>Opwekking Verkeer Logboek 2022</h2>
+        <h3>Dag: {% if currentday == "all" %}Alles{% else %}{{ currentday }}{% endif %}</h3>
+        <p class="text-muted">Geëxporteerd door {{ request.user }} op {% load i18n %}{% language 'nl' %} {% now 'l d M H:i' %}{% endlanguage %} ({{ logs.count }} logs)</p>
+
+
+        <table class="table table-striped" >
+            <thead>
+                <tr>
+                    <th style="width: 5%;">ID</th>
+                    <th style="width: 10%;">Toegevoegd door</th>
+                    <th style="width: 10%;">Toegevoegd op</th>
+                    <th style="width: 75%;">Log</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.pk }}</td>
+                        <td>{{ log.added_by }}</td>
+                        {% load i18n %}
+                                <td>{% language 'nl' %}{{ log.added_on|date:'l' }}<br>{{ log.added_on|date:'d M H:i' }}{% endlanguage %}</td>
+                        <td>{{ log.log|safe|linebreaks }}
+                        <br>
+                            {% if log.file1 or log.file2 %}
+                                {% if log.file1 %}
+                                    {% if log.file1.url|checkifimage %}
+                                        <img src="{{ log.file1.url }}" class="w-100" style="max-height: 300px;" />
+                                    {% else %}
+                                         <a href="{{ log.file1.url }}" target="_blank" class="badge bg-secondary">
+                                             <i class="fas fa-paperclip"></i>
+                                             {{ log.file1.name }} ({{ log.file1.path|filesize|filesizeformat }})
+                                             </a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if log.file2 %}
+                                {{ log.file2.url|checkifimage }}
+                                    {% if log.file2.url|checkifimage %}
+                                        <img src="{{ log.file2.url }}" class="w-100" style="max-height: 300px;" />
+                                    {% else %}
+                                         <a href="{{ log.file2.url }}" target="_blank" class="badge bg-secondary">
+                                             <i class="fas fa-paperclip"></i>
+                                             {{ log.file2.name }} ({{ log.file2.path|filesize|filesizeformat }})
+                                             </a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>

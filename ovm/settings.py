@@ -13,20 +13,16 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4p=zma)(%ygla6p%j@!*r*(wi4^jwcvz2@c7=e-qlyl8ta2m10'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -42,6 +38,7 @@ INSTALLED_APPS = [
     'central.apps.CentralConfig',
     'users.apps.UsersConfig',
     'logbook.apps.LogbookConfig',
+    'planner.apps.PlannerConfig',
 
     "bootstrap4",
     'crispy_forms',
@@ -49,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'phonenumber_field',
     'bootstrap_datepicker_plus',
+    'simple_history',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 ROOT_URLCONF = 'ovm.urls'
@@ -82,15 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ovm.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
@@ -151,3 +143,34 @@ LOGIN_URL = 'login'
 # EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+gettext = lambda x: x
+
+LANGUAGE_CODE = 'nl'
+LANGUAGES = (
+    ('nl', gettext('Dutch')),
+    ('en-us', gettext('American English')),
+)
+
+USE_L10N = False  # ignore all browser settings! Needed, otherwise decimal seperator is set to ',' by browser ...
+DECIMAL_SEPARATOR = '.'  # YES PLEASE
+
+try:
+    from ovm.local_settings import *
+except ImportError as e:
+    raise Exception(e)
+
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'webreus.email'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+# # Email
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+

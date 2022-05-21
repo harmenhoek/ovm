@@ -1,11 +1,89 @@
-{% extends "central/base.html" %}
 {% block content %}
 
+<div class="modal-header">
+    <h5 class="modal-title">Log #{{ object.pk }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+</div>
+
+<div class="modal-body">
+    <table class="table">
+        <tbody>
+
+            <tr>
+                <th scope="row">ID</th>
+                <td>{{ object.pk }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Toegevoegd op</th>
+                <td>{% load i18n %}{% language 'nl' %}{{ object.added_on|date:'d M H:i' }}{% endlanguage %}</td>
+            </tr>
+            <tr>
+                <th scope="row">Toegevoegd door</th>
+                <td>{{ object.added_by }}</td>
+            </tr>
+            <tr style="border:0 white;">
+                <th scope="row">Log</th>
+                <td></td>
+            </tr>
+            <tr style="border-top:0 white;">
+                <td colspan="2"><div style="min-height: 200px;">{{ object.log|safe|linebreaks }}</div></td>
+            </tr>
+            <tr style="border:0 white;">
+                <th scope="row">Bestanden</th>
+                <td></td>
+            </tr>
+            <tr style="border-top:0 white;">
+                {% if object.file1 or object.file2 %}
+                    <td colspan="2">
+                        {% if object.file1 %}
+                            {% if object.file1.url|checkifimage %}
+                                <img src="{{ object.file1.url }}" class="w-100"/>
+                            {% else %}
+                                 <a href="{{ object.file1.url }}" target="_blank" class="badge bg-secondary">
+                                     <i class="fas fa-paperclip"></i>
+                                     {{ object.file1.name }} ({{ object.file1.path|filesize|filesizeformat }})
+                                     </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if object.file2 %}
+                        {{ object.file2.url|checkifimage }}
+                            {% if object.file2.url|checkifimage %}
+                                <img src="{{ object.file2.url }}" class="w-100"/>
+                            {% else %}
+                                 <a href="{{ object.file2.url }}" target="_blank" class="badge bg-secondary">
+                                     <i class="fas fa-paperclip"></i>
+                                     {{ object.file2.name }} ({{ object.file2.path|filesize|filesizeformat }})
+                                     </a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% else %}
+                    <td colspan="2"><i class="text-muted">Geen bestanden toegevoegd</i></td>
+                {% endif %}
+
+            </tr>
 
 
+        </tbody>
+    </table>
+</div>
 
-
+<div class="modal-footer justify-content-between">
+    {% if user == log.added_by %}
+        <a hx-get="{% url 'log-update' log.pk %}" hx-target="#dialoghtmx" class="btn btn-primary "><i class="fas fa-cog"></i> Bewerken</a>
+    {% endif %}
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+</div>
 
 
 
 {% endblock content %}
+
+
+
+
+{% block tablescript %}
+{# Code block for javascript table #}
+
+{% endblock tablescript %}

@@ -1,3 +1,5 @@
+{% load static %}
+
 <h5 class="card-header">Bezetting post {{ current_post.postslug }}
     <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Toevoegen aan post">
         <i class="fas fa-plus" style="cursor: pointer" hx-get="{% url 'planning-add' current_post.pk %}" hx-target="#dialoghtmx"></i>
@@ -22,7 +24,7 @@
                             </div>
 
                         {% endif %}
-                            <div class="float-end mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Bevestigen op post">
+                            <div class="float-end mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Aanpassen">
                                 <i class="fas fa-edit" style="cursor: pointer" hx-get="{% url 'planning-modify' occ.pk %}" hx-target="#dialoghtmx"></i>
                             </div>
 
@@ -33,32 +35,31 @@
 
 
 
+                        <div class="row">
+                            <div class="col-4">
+                                {% if occ.user.image %}
+                                    <img src="{{ occ.user.image.url }}" class="w-100 rounded"/><br>
+                                {% else %}
+                                    <img src="{% static 'central/default.png' %}" class="w-100 rounded"/><br>
+                                {% endif %}
+
+                                <a hx-get="{% url 'user-detail' occ.user.pk %}" hx-target="#dialoghtmx" class="btn btn-secondary btn-sm mt-2 w-100"><i class="fas fa-info"></i> Meer</a>
+
+                            </div>
+                            <div class="col-8 px-0">
+                                <b>{{ occ.user.first_name }} {{ occ.user.last_name }}</b><br>
+                                {% if occ.user.phonenumber %}
+                                    {{ occ.user.phonenumber|nonetounknown|safe }}<br>
+                                {% endif %}
+                                {% if occ.user.description %}
+                                <div class="text-muted small" style="margin-left:1em; margin-right:0.5em;">{{ occ.user.description|linebreaks }}</div>
+                                {% endif %}
+                                <hr class="my-1">
+                                {{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }}
+                            </div>
+                        </div>
 
 
-
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <th scope="row">Naam</th>
-                                <td>{{ occ.user.first_name }} {{ occ.user.last_name }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Tel</th>
-                                <td>{{ occ.user.profile.phonenumber|nonetounknown|safe }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Planning</th>
-                                <td>{{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }} </td>
-                            </tr>
-                            {% if occ.user.profile.description %}
-                            <tr>
-                                <th scope="row">Opmerking</th>
-                                <td>{{ occ.user.profile.description }}</td>
-                            </tr>
-                            {% endif %}
-
-                            </tbody>
-                        </table>
                     </div>
                 </div>
     {% empty %}

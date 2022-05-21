@@ -1,16 +1,23 @@
-{% extends "central/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-   <div class="content-section">
-      <form method="POST" enctype="multipart/form-data">
-           {% csrf_token %}
-           <fieldset class="form-group">
-               <legend class="border-bottom mb-4">{{ button }} Log</legend>
-               {{ form|crispy }}
-           </fieldset>
-           <div class="form-group">
-               <button class="btn btn-outline-info" type="submit">{{ button }}</button>
-           </div>
-       </form>
-   </div>
+{% load central_customfilters %}
+{{ form.media }}
+
+<form hx-post="{{ request.path }}">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title">{{ button }} Log</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {{ form|crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+        <button class="btn btn-success" type="submit">{{ button }}</button>
+    </div>
+</form>
+
+
 {% endblock content %}

@@ -1,9 +1,16 @@
 {% extends "central/base.html" %}
 {% block content %}
+
+<div class="row pt-4">
+    <div class="col-12">
+        <h2>Je bent uitgelogd</h2>
+    </div>
+</div>
+
     <h2>You have been logged out</h2>
     <div class="border-top pt-3">
         <small class="text-muted">
-            <a href="{% url 'login' %}">Log In Again</a>
+            <a href="{% url 'login' %}">Opnieuw inloggen</a>
         </small>
     </div>
 {% endblock content %}

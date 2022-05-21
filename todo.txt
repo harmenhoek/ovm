@@ -1,5 +1,4 @@
 TODO
-- history of items
 - prevent duplicate planning of people
 - user added by
 - security login_required
@@ -10,7 +9,27 @@ TODO
 - User modify
 - planning
 - logbook modals
+- data tooltips no longer work
+- image upload logbook + users
+- user show planning
 
-Plan of approach:
-- make shift obsolete, just use for date and time.
-- make js selectorbox.
+
+- add planner not correct yet (only future times supported)
+- Update table of user and logbook after hx done.
+- footer fix
+- menu user topright
+- logout: use hx message and directly redirect to login
+- file processing logbook: size, and resize if image?
+- fancy image show everywhere
+- edit post occ does not work anymore:
+    File "/Users/harmenhoek/Dev/OVM/central/forms.py", line 46, in clean
+    if endtime < starttime:
+TypeError: '<' not supported between instances of 'datetime.time' and 'NoneType'
+- hx-get for planning!
+
+
+- check , removed=False in all queries
+- table planner: wrap text or something. Keep cell width constant.
+- if user updated on home, reload post occupation too
+
+Planning remove in planner!

@@ -10,7 +10,7 @@
     <table class="table">
         <tbody>
 
-            {% if object.image.name != "default.jpg" %}
+            {% if object.image %}
                 <tr>
                     <th scope="row"></th>
                     <td><img class="rounded mr-0 w-100" src="{{ object.image.url }}"> </td>
@@ -63,7 +63,7 @@
 
 <div class="modal-footer">
 <!--    url 'user-update' object.pk-->
-    <button class="btn btn-primary" type="submit"><i class="fas fa-cog"></i> Bewerken</button>
+    <a hx-get="{% url 'user-update' object.pk %}" hx-target="#dialoghtmx" class="btn btn-primary"><i class="fas fa-cog"></i> Bewerken</a>
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
 </div>
 

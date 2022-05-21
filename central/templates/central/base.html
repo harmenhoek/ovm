@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
     <link rel="stylesheet" type="text/css" href="{% static 'central/main.css' %}">
+
     <script src="{% static 'central/htmx.min.js' %}"></script>
 
     <script src="https://kit.fontawesome.com/f40414c26a.js" crossorigin="anonymous"></script>
@@ -33,7 +34,7 @@
 
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="bootstrap" viewBox="0 0 118 94">
-    <title>Bootstrap</title>
+    <title></title>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z"></path>
   </symbol>
   <symbol id="home" viewBox="0 0 16 16">
@@ -59,33 +60,32 @@
 
 
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 
 <header>
 
 
-
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'central-home' %}">Opwekking Verkeer Manager 2</a>
+    <a class="navbar-brand" href="{% url 'central-home' %}"><b>Opwekking Verkeer</b> Manager</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0 nav justify-content-center">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{% url 'central-home' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+          <a class="nav-link {% block tab1_active %}{% endblock tab1_active %}" aria-current="page" href="{% url 'central-home' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'users' %}"><i class="fas fa-users"></i> Personen</a>
+          <a class="nav-link {% block tab2_active %}{% endblock tab2_active %}" href="{% url 'users' %}"><i class="fas fa-users"></i> Personen</a>
         </li>
           <li class="nav-item">
-          <a class="nav-link" href="{% url 'logbook' %}"><i class="fas fa-book"></i> Logboek</a>
+          <a class="nav-link {% block tab3_active %}{% endblock tab3_active %}" href="{% url 'logbook' %}"><i class="fas fa-book"></i> Logboek</a>
         </li>
           <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-calendar-alt"></i> Planning</a>
+          <a class="nav-link {% block tab4_active %}{% endblock tab4_active %}" href="{% url 'planner' %}"><i class="fas fa-calendar-alt"></i> Planning</a>
         </li>
 
       </ul>
@@ -99,14 +99,10 @@
 
           <div class="flex-shrink-0 dropdown">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+            <img src="{% if user.image %}{{ user.image.url }}{% else %}{% static 'central/default.png' %}{% endif %}" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser2">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Uitloggen</a></li>
           </ul>
         </div>
 
@@ -117,12 +113,12 @@
 </header>
 
 
-<main class="container-fluid w-100">
+<main class="container-fluid mt-5">
 
 
 
 
-<div aria-live="polite" aria-atomic="true" class="bg-dark position-relative bd-example-toasts" style="z-index: 99">
+<div aria-live="polite" aria-atomic="true" class="bg-dark position-relative bd-example-toasts mt-4" style="z-index: 99;">
     <div class="toast-container position-absolute top-1 start-50 translate-middle-x position-fixed">
         <div id="toast2" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div id="toast-body2" class="toast-body">
@@ -136,14 +132,14 @@
 </main>
 
 
-{% block footer %}
-<footer class="mt-5 pt-3 pb-0 mb-3 text-muted text-center text-small border-top">
-    <small class="m-0">Version 1 | <a class="text-muted"
-                                      href="https://github.com/harmenhoek/pcfems/"
-                                      target="_blank">About OVM 2 <i
-            class="fas fa-external-link-alt fa-xs" style="vertical-align: +20%"></i></a></small>
+<footer class="mb-0 pt-3 pb-0 mb-3 text-muted text-center text-small border-top mt-auto">
+    <div class="container">
+    <small>
+        Versie 2.0 | <a class="text-muted" href="https://github.com/harmenhoek/ovm/" target="_blank">Over OVM
+            </a>
+    </small>
+    </div>
 </footer>
-{% endblock footer %}
 
 
 <div id="modalhtmx" class="modal fade" tabindex="-1">
@@ -178,6 +174,9 @@
 
 
 
+<!-- Datatables -->
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.23/b-1.6.5/b-colvis-1.6.5/b-print-1.6.5/r-2.2.7/datatables.min.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>-->
 
 
 
@@ -218,8 +217,7 @@ $( document ).ready(function() {
     const toast = new bootstrap.Toast(toastElement, { delay: 2000 })
 
     htmx.on("showMessage", (e) => {
-        console.log( "ready!" );
-      toastBody.innerText = e.detail.value
+      toastBody.innerHTML = e.detail.value
       toast.show()
     })
 

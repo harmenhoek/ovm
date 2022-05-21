@@ -3,12 +3,13 @@ from django.utils import timezone
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
 from django.urls import reverse
+from simple_history.models import HistoricalRecords
 
 class Flag(models.Model):
     flag = models.CharField(max_length=100)
     description = models.TextField()
     icon = models.CharField(max_length=100, default='bug', help_text='Set a icon from <a target="_blank" href="https://fontawesome.com/icons?m=free">this library</a>.')
-    # history = HistoricalRecords()
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.flag
@@ -25,6 +26,7 @@ class Post(models.Model):
     active = models.BooleanField(default=True)
     flag = models.ForeignKey(Flag, on_delete=models.SET_NULL, null=True, blank=True)
     flag_comment = models.CharField(max_length=100, null=True, blank=True)
+    history = HistoricalRecords()
 
 
     def __str__(self):
@@ -35,10 +37,10 @@ class Post(models.Model):
 
 
 class ShiftDay(models.Model):
-    date = models.DateField()
-    dayname = models.CharField(max_length=15)
+    date = models.DateField(verbose_name="Datum")
+    dayname = models.SlugField(max_length=15, verbose_name="Dag")
     active = models.BooleanField(default=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, verbose_name="Extra info dag")
 
     def __str__(self):
         return f"{self.dayname} ({self.date})"
@@ -49,22 +51,10 @@ class ShiftTime(models.Model):
     timename = models.IntegerField(help_text='Number of the shift')
     active = models.BooleanField(default=True)
     description = models.TextField(null=True, blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"Shift {self.timename} ({self.timestart} - {self.timeend})"
-
-
-#
-# class Shift(models.Model):  # to be made obsolete!
-#     shiftname = models.CharField(max_length=10)
-#     date = models.ForeignKey(Day, on_delete=models.SET_NULL, null=True, blank=True)
-#     shiftstart = models.TimeField()
-#     shiftend = models.TimeField()
-#     shiftstart_extra = models.DurationField()
-#     shiftend_extra = models.DurationField()
-#
-#     def __str__(self):
-#         return f"{self.shiftname} ({self.date.dayname} {self.shiftstart.strftime('%H:%M')}-{self.shiftend.strftime('%H:%M')})"
 
 
 class Planning(models.Model):
@@ -79,6 +69,7 @@ class Planning(models.Model):
     confirmed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_confirmed_by')
     removed = models.BooleanField(default=False, verbose_name='Verwijderd')
     removed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_removed_by')
+    history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.post} | {self.user}  - confirmed: {self.confirmed}"
+        return f"{self.pk} -- post {self.post} | {self.user}  - confirmed: {self.confirmed} - deleted: {self.removed}"

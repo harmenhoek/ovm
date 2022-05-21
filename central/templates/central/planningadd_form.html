@@ -22,12 +22,22 @@
         var selectedend = shiftend[$("input#shifts_range_slider").val()-2];
         $('#endtime').val(selectedend);
     }
+
+    function Update_Shifttimes_Double() {
+        var selectedshift = $("input#shifts_range_slider").val().split(',');
+        var selectedstart = shiftstart[selectedshift[0]-1];
+        var selectedend = shiftend[selectedshift[1]-2];
+        $('#starttime').val(selectedstart);
+        $('#endtime').val(selectedend);
+    }
+
 </script>
 
 <form hx-post="{{ request.path }}">
     {% csrf_token %}
     <div class="modal-header">
-        Bezetting toevoegen
+        <h5 class="modal-title">{% if planning %}Planning{% else %}Bezetting{% endif %} toevoegen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
         {{ form|crispy }}

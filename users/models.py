@@ -6,17 +6,18 @@ from django.contrib.auth.models import AbstractUser
 import os
 import time
 from PIL import Image, ExifTags
-
+from simple_history.models import HistoricalRecords
 
 class CustomUser(AbstractUser):
     phonenumber = PhoneNumberField(unique=True, null=True, blank=True, verbose_name='Telefoonnummer',
-                                   help_text='Telefoonnummer in formaat +31612065956.')  # load as person.phoneNumber.as_e164 https://www.delftstack.com/howto/django/django-phone-number-field/
+                                   help_text='Telefoonnummer in formaat +31600000000.')  # load as person.phoneNumber.as_e164 https://www.delftstack.com/howto/django/django-phone-number-field/
     dateofbirth = models.DateField(verbose_name='Geboortedatum', null=True, blank=True)
-    image = models.ImageField(upload_to='profile_pics', blank=True)
+    image = models.ImageField(upload_to='profile_pics', blank=True, null=True, verbose_name="Profiel foto")
     verkeersregelaar = models.BooleanField(default=False)
     centralist = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=timezone.now)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True, verbose_name="Extra info persoon")
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -26,9 +27,6 @@ class CustomUser(AbstractUser):
         maxsize = 1000
         if self.image:
             self.image = process_image(self.image.path, self.pk, maxsize, media_folder='profile_pics')
-            super().save(*args, **kwargs)
-        else:
-            self.image = 'default.png'
             super().save(*args, **kwargs)
 
 

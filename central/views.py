@@ -33,7 +33,7 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     template_name = 'central/user_detail.html'
 
 
-@method_decorator(staff_member_required, name='dispatch') #only staff can add new
+@method_decorator(staff_member_required, name='dispatch')
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = get_user_model()
     success_message = "User <b>%(first_name)s %(last_name)s (%(email)s)</b> was updated successfully."
@@ -43,8 +43,12 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse("user-detail", kwargs={"pk": self.object.pk})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button'] = 'Opslaan'
+        return context
 
-@method_decorator(staff_member_required, name='dispatch') #only staff can add new
+@method_decorator(staff_member_required, name='dispatch')
 class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = get_user_model()
     form_class = UserUpdateForm
@@ -59,8 +63,12 @@ class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         form.instance.username = form.instance.email
         response = super(UserCreateView, self).form_valid(form)
         self.object = form.save()
-
         return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['button'] = 'Toevoegen'
+        return context
 
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
@@ -87,18 +95,7 @@ def about(request):
     return render(request, 'central/about.html', {'shiftstart': shiftstart, 'shiftend': shiftend})
 
 
-
-
-
-
-
-
-
-
-
 # https://blog.benoitblanchon.fr/django-htmx-modal-form/
-
-
 
 class PostMapView(LoginRequiredMixin, ListView):
     model = Post
@@ -120,18 +117,18 @@ class PostMapView(LoginRequiredMixin, ListView):
         # now + overdue
 
         status_orange = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
-                                                starttime__lt=datetimenow, endtime__lt=datetimenow). \
-            values('post').distinct()
+                                                starttime__lt=datetimenow, endtime__lt=datetimenow)\
+            .exclude(user=None).values('post').distinct()
 
         # now + not confirmed (planning)
         status_blue = Planning.objects.filter(removed=False, confirmed=False, date=datenow,
                                               starttime__lt=datetimenow, endtime__gt=datetimenow). \
-            exclude(pk__in=status_orange).values('post').distinct()
+            exclude(pk__in=status_orange, user=None).values('post').distinct()
 
         # now + confirmed
         status_green = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
                                                starttime__lt=datetimenow, endtime__gt=datetimenow).\
-            exclude(pk__in=status_orange | status_blue).values('post').distinct()
+            exclude(pk__in=status_orange | status_blue, user=None).values('post').distinct()
 
 
         status_orange_2 = [{i['post']: 'warning'} for i in status_orange]
@@ -172,15 +169,15 @@ class PostOccupationView(LoginRequiredMixin, ListView):
         occ_orange = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                              confirmed=True,
                                              starttime__lt=datetimenow, endtime__lt=datetimenow,
-                                             date=datenow)
+                                             date=datenow).exclude(user=None)
         occ_blue = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                            confirmed=False,
                                            starttime__lt=datetimenow, endtime__gt=datetimenow,
-                                           date=datenow)
+                                           date=datenow).exclude(user=None)
         occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                             confirmed=True,
                                             starttime__lt=datetimenow, endtime__gt=datetimenow,
-                                           date=datenow)
+                                           date=datenow).exclude(user=None)
         occ = occ_orange | occ_blue | occ_green
         occ_color = ["warning" for i in range(occ_orange.count())] + \
                     ["primary" for i in range(occ_blue.count())] + \
@@ -196,7 +193,6 @@ class PostInfoView(LoginRequiredMixin, DetailView):
     slug_field = 'postslug'
     context_object_name = 'current_post'
 
-
 @login_required
 def planning_approve(request, pk):
     plan_item = Planning.objects.get(pk=pk)
@@ -211,7 +207,7 @@ def planning_approve(request, pk):
                 'HX-Trigger': json.dumps({
                     "planningUpdated": None,
                     "postmapUpdated": None,
-                    "showMessage": f"Planning bevestigd."
+                    "showMessage": f"<b>{plan_item.user}</b> bevestigd op post <b>{plan_item.post}</b>."
                 })
             })
 
@@ -231,7 +227,7 @@ def planning_remove(request, pk):
                 'HX-Trigger': json.dumps({
                     "planningUpdated": None,
                     "postmapUpdated": None,
-                    "showMessage": f"Planning verwijderd."
+                    "showMessage": f"<b>{plan_item.user}</b> verwijderd van post <b>{plan_item.post}</b>."
                 })
             })
 
@@ -255,7 +251,7 @@ def planning_add_dashboard(request, pk='None'):
                     'HX-Trigger': json.dumps({
                         "planningUpdated": None,
                         "postmapUpdated": None,
-                        "showMessage": f"Planning added."
+                        "showMessage": f"<b>{new_planning.user}</b> toegevoegd op post <b>{new_planning.post}</b>."
                     })
                 })
         return render(request, 'central/planningadd_form.html', {'form': form})
@@ -273,8 +269,6 @@ def planning_add_dashboard(request, pk='None'):
 
         return render(request, 'central/planningadd_form.html', {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend})
 
-
-
 @login_required
 def planning_modify(request, pk):
     plan_item = get_object_or_404(Planning, pk=pk)
@@ -282,14 +276,14 @@ def planning_modify(request, pk):
     if request.method == "POST":
         form = ModifyPlanningDashboard(request.POST, instance=plan_item)
         if form.is_valid():
-            form.save()
+            plan_item = form.save()
             return HttpResponse(
                 status=204,
                 headers={
                     'HX-Trigger': json.dumps({
                         "planningUpdated": None,
                         "postmapUpdated": None,
-                        "showMessage": f"Planning modified."
+                        "showMessage": f"<b>{plan_item.user}</b> aangepast op post <b>{plan_item.post}</b>."
                     })
                 })
 

@@ -1,0 +1,78 @@
+{% extends "central/base.html" %}
+{% block tab4_active %}active{% endblock tab4_active %}
+{% block content %}
+
+<!--<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">-->
+<!--        <h1 class="h2">Planning</h1>-->
+<!--        <div class="btn-toolbar mb-2 mb-md-0">-->
+<!--          <div class="btn-group me-2">-->
+<!--            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>-->
+<!--            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>-->
+<!--          </div>-->
+<!--          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">-->
+<!--            <span data-feather="calendar"></span>-->
+<!--            This week-->
+<!--          </button>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<div id='thisone' class="row d-flex justify-content-center">
+    <div class="col-xl-12 col-12">
+         <div class="card">
+            <h5 class="card-header">Planner</h5>
+            <div class="card-body">
+                <div class="btn-group">
+            {% for day in alldays %}
+                <a href="{% url 'planner' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }} ({{ day.date }})</a>
+            {% endfor %}
+        </div>
+
+        <div class="float-end mb-2">
+            <a class="btn btn-primary" hx-get="{% url 'occupation-add' %}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a></a>
+            <a class="btn btn-warning" hx-get="{% url 'planner-add' %}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a></a>
+        </div>
+    </div> <!-- col-12 -->
+    <div class="col-12 overflow-auto">
+
+    <style>
+         td, tr {
+            border: 0.5px solid #e6e6e6 ;
+            border-collapse: collapse;
+        }
+
+    </style>
+
+        <div hx-get="{% url 'planner-table' currentday %}" hx-trigger="load, every 60s, planningUpdated from:body"></div>
+
+
+
+            </div> <!-- card-body -->
+        </div> <!-- class="card" -->
+    </div> <!-- class="col" -->
+</div> <!-- class="row" -->
+
+
+{% endblock content %}
+
+
+{% block tablescript %}
+{# Code block for javascript table #}
+
+<script>
+    $(document).ready(function () {
+        $('#planner_list').DataTable({
+            paging: false,
+            ordering: false,
+            filter: true,
+            info: false,
+            "language": {
+                "zeroRecords": "Geen resultaten",
+                "infoEmpty": "Geen data",
+                "infoFiltered": "(filtered from _MAX_ total records)",
+                "search": "Zoeken:",
+            }
+        });
+    });
+</script>
+
+{% endblock tablescript %}

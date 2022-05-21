@@ -4,14 +4,16 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 from django.urls import reverse
 import os
-
+from simple_history.models import HistoricalRecords
 
 class Log(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.RESTRICT, limit_choices_to={'is_superuser': False})
     added_on = models.DateTimeField(default=timezone.now)
     log = models.TextField()
-    file1 = models.FileField(blank=True, null=True)
-    file2 = models.FileField(blank=True, null=True)
+    file1 = models.FileField(blank=True, null=True, verbose_name="Bestanden")
+    file2 = models.FileField(blank=True, null=True, verbose_name="")
+    deleted = models.BooleanField(default=False)
+    history = HistoricalRecords()
 
     def get_absolute_url(self):
         return reverse('log-detail', kwargs={'pk': self.pk})

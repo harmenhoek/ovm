@@ -17,7 +17,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 # from xhtml2pdf import pisa
 
-
+@staff_member_required
 def logbooktable(request, dayname=None):
     if dayname is None:
         # see if current date is in list
@@ -36,6 +36,7 @@ def logbooktable(request, dayname=None):
 
     return render(request, 'logbook/log_list_table.html', {'logs': logs})
 
+@staff_member_required
 def logbook(request, dayname=None):
     if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
         # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
@@ -236,6 +237,7 @@ class LogDeleteView(SuccessMessageMixin, LoginRequiredMixin, UserPassesTestMixin
 #     pdf = render_to_pdf("logbook/exportpage.html", {'logs': logs, 'currentday': dayname, })
 #     return HttpResponse(pdf, content_type='application/pdf')
 
+@staff_member_required
 def exportpage(request, dayname):
     if dayname == "all":
         logs = Log.objects.filter(deleted=False)

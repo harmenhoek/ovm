@@ -19,7 +19,7 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'last_name', 'email', 'phonenumber', 'dateofbirth', 'image',
-                  'verkeersregelaar', 'centralist', 'description']
+                  'description', 'specialism']
         widgets = {
             'dateofbirth': forms.DateInput(
                 attrs={'class': 'form-control',
@@ -38,6 +38,6 @@ class UserUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
-        self.fields['verkeersregelaar'].initial = True
+        # self.fields['verkeersregelaar'].initial = True
         self.fields['phonenumber'].initial = "+316"
 

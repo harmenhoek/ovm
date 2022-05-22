@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, FileResponse
 import json
 from .forms import ModifyPlanningPlanner, AddPlanningPlanner, AddOccupationPlanner
 
+@staff_member_required
 def planner(request, dayname=None):
     if dayname is None:
         # see if current date is in list
@@ -28,6 +29,7 @@ def planner(request, dayname=None):
     alldays = ShiftDay.objects.filter(active=True)
     return render(request, 'planner/planner_list.html', {'currentday': dayname, 'alldays': alldays, 'daydate': daydate, })
 
+@staff_member_required
 def plannertable(request, dayname):
     resolution = 15 * 60
     time_start = 7 * 60 * 60
@@ -38,7 +40,7 @@ def plannertable(request, dayname):
 
     reference = toSeconds(daydate, datetime.time(0, 0))
 
-    posts = Post.objects.values('pk', 'post_fullname').filter(active=True)
+    posts = Post.objects.values('pk', 'post_fullname').filter(active=True).order_by('post_fullname')
     html = TableHeaderFooter('thead', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "<tbody>"
 
@@ -71,7 +73,7 @@ def plannertable(request, dayname):
     return render(request, 'planner/planner_list_table.html', {'html': html})
 
 
-@login_required
+@staff_member_required
 def planner_modify(request, pk, start=None, end=None):
     plan_item = get_object_or_404(Planning, pk=pk)
 
@@ -95,11 +97,11 @@ def planner_modify(request, pk, start=None, end=None):
         form = ModifyPlanningPlanner(instance=plan_item, initial={'startime': start, 'endtime': end})
 
     return render(request, 'central/planningmodify_form.html', {
-        'form': form,
+        'form': form, 'plan_pk': plan_item.pk,
     })
 
 
-@login_required
+@staff_member_required
 def add_planning(request, pk=None):
     if request.method == "POST":
         form = AddPlanningPlanner(request.POST)
@@ -131,9 +133,7 @@ def add_planning(request, pk=None):
         return render(request, 'central/planningadd_form.html', {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend, 'planning': True, })
 
 
-
-
-@login_required
+@staff_member_required
 def add_occupation(request, pk=None):
     if request.method == "POST":
         form = AddOccupationPlanner(request.POST)

@@ -8,15 +8,27 @@ import time
 from PIL import Image, ExifTags
 from simple_history.models import HistoricalRecords
 
+class UserSpecialism(models.Model):
+    specialism = models.CharField(max_length=100, verbose_name="Specialisme")
+    description = models.TextField(null=True, blank=True, verbose_name="Beschrijving")
+    icon = models.CharField(max_length=100, null=True, blank=True, help_text='See fa-icons: https://fontawesome.com/v5/icons (enter class)')
+    colorcode = models.CharField(max_length=100, null=True, default='bg-secondary', help_text='See Bootstrap badges: https://getbootstrap.com/docs/5.0/components/badge/ (enter class after badge)')
+    active = models.BooleanField(default=True)
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return f'{self.specialism}'
+
+default_specialism = UserSpecialism.objects.filter(specialism="Verkeersregelaar")[0]
+
 class CustomUser(AbstractUser):
     phonenumber = PhoneNumberField(unique=True, null=True, blank=True, verbose_name='Telefoonnummer',
                                    help_text='Telefoonnummer in formaat +31600000000.')  # load as person.phoneNumber.as_e164 https://www.delftstack.com/howto/django/django-phone-number-field/
     dateofbirth = models.DateField(verbose_name='Geboortedatum', null=True, blank=True)
     image = models.ImageField(upload_to='profile_pics', blank=True, null=True, verbose_name="Profiel foto")
-    verkeersregelaar = models.BooleanField(default=False)
-    centralist = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=timezone.now)
     description = models.TextField(null=True, blank=True, verbose_name="Extra info persoon")
+    specialism = models.ManyToManyField(UserSpecialism, blank=True, verbose_name="Specialisme(n)", help_text="Houd control/command ingedrukt om meerdere te selecteren.", default=default_specialism)
     history = HistoricalRecords()
 
     def __str__(self):

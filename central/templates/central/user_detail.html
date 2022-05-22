@@ -41,12 +41,14 @@
                 <td>{{ object.phonenumber|nonetounknown|safe }}</td>
             </tr>
             <tr>
-                <th scope="row">Verkeersregelaar</th>
-                <td>{{ object.verkeersregelaar|FancyTrueFalse|safe }}</td>
-            </tr>
-            <tr>
-                <th scope="row">Centralist</th>
-                <td>{{ object.centralist|FancyTrueFalse|safe }}</td>
+                <th scope="row">Specialismen</th>
+                <td>
+                    {% for specialism in user.specialism.all %}
+                        <span class="badge {{ specialism.colorcode }}">
+                            {% if specialism.icon %}<i class="{{ specialism.icon }}"></i>{% endif %} {{ specialism }}
+                        </span>
+                    {% endfor %}
+                </td>
             </tr>
             <tr>
                 <th scope="row">Toegevoegd op</th>
@@ -54,7 +56,7 @@
             </tr>
             <tr>
                 <th scope="row">Omschrijving</th>
-                <td>{{ object.description }}</td>
+                <td>{{ object.description|nonetounknown|safe }}</td>
             </tr>
 
         </tbody>

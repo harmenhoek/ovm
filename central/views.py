@@ -23,11 +23,12 @@ from .forms import ModifyPlanningDashboard, AddPlanningDashboard
 import json
 from datetime import datetime, date
 
-
+@method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
     model = get_user_model()
     template_name = 'central/user_list.html'
 
+@method_decorator(staff_member_required, name='dispatch')
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = get_user_model()
     template_name = 'central/user_detail.html'
@@ -70,6 +71,7 @@ class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         context['button'] = 'Toevoegen'
         return context
 
+@method_decorator(staff_member_required, name='dispatch')
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'central/home.html'  # <app>/<model>_<viewtype>.html
@@ -97,6 +99,7 @@ def about(request):
 
 # https://blog.benoitblanchon.fr/django-htmx-modal-form/
 
+@method_decorator(staff_member_required, name='dispatch')
 class PostMapView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'central/post_map.html'  # <app>/<model>_<viewtype>.html
@@ -143,6 +146,7 @@ class PostMapView(LoginRequiredMixin, ListView):
 
         return context
 
+@method_decorator(staff_member_required, name='dispatch')
 class PostOccupationView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'central/post_occupation.html'  # <app>/<model>_<viewtype>.html
@@ -186,6 +190,7 @@ class PostOccupationView(LoginRequiredMixin, ListView):
 
         return context
 
+@method_decorator(staff_member_required, name='dispatch')
 class PostInfoView(LoginRequiredMixin, DetailView):
     model = Post
     template_name = 'central/post_info.html'  # <app>/<model>_<viewtype>.html
@@ -193,7 +198,7 @@ class PostInfoView(LoginRequiredMixin, DetailView):
     slug_field = 'postslug'
     context_object_name = 'current_post'
 
-@login_required
+@staff_member_required
 def planning_approve(request, pk):
     plan_item = Planning.objects.get(pk=pk)
 
@@ -213,7 +218,7 @@ def planning_approve(request, pk):
 
     return render(request, 'central/planningapprove_form.html')
 
-@login_required
+@staff_member_required
 def planning_remove(request, pk):
     plan_item = Planning.objects.get(pk=pk)
 
@@ -233,14 +238,13 @@ def planning_remove(request, pk):
 
     return render(request, 'central/planningremove_form.html')
 
-@login_required
+@staff_member_required
 def planning_add_dashboard(request, pk='None'):
     if request.method == "POST":
         form = AddPlanningDashboard(request.POST)
         if form.is_valid():
             new_planning = form.save()
             new_planning.date = date.today()
-            new_planning.confirmed = True
             new_planning.created_by = request.user
             new_planning.confirmed_by = request.user
             new_planning.save()
@@ -269,7 +273,7 @@ def planning_add_dashboard(request, pk='None'):
 
         return render(request, 'central/planningadd_form.html', {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend})
 
-@login_required
+@staff_member_required
 def planning_modify(request, pk):
     plan_item = get_object_or_404(Planning, pk=pk)
 
@@ -291,5 +295,5 @@ def planning_modify(request, pk):
         form = ModifyPlanningDashboard(instance=plan_item)
 
     return render(request, 'central/planningmodify_form.html', {
-        'form': form,
+        'form': form, 'plan_pk': plan_item.pk,
     })

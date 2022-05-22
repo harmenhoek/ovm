@@ -20,7 +20,7 @@ active
 .container img {
   width: 100%;
   height: auto;
-  filter: opacity(80%);
+  filter: opacity(50%);
 
 }
 
@@ -80,13 +80,25 @@ active
         <div class="card mb-2">
             <h5 class="card-header">Postenkaart</h5>
             <div class="card-body m-0 p-0">
-                    <div class="container">
-                        <img src="{% static 'central/postmap_1.jpg' %}" class="" alt="postmap">
-                        <div hx-get="{% url 'post-map' %}" hx-trigger="load, every 30s, postmapUpdated from:body"></div>
-                    </div>
-            </div>
-        </div>
-    </div>
+                <div class="container">
+                    <img src="{% static 'central/postmap_1.jpg' %}" class="" alt="postmap">
+                    <div hx-get="{% url 'post-map' %}" hx-trigger="load, every 30s, postmapUpdated from:body"></div>
+                </div>
+            </div> <!-- card-body -->
+        </div> <!-- <div class="card mb-2"> -->
+
+
+<!--        <div class="row">-->
+<!--            <div class="col-3">-->
+<!--                <div class="card mb-2">-->
+<!--                    <h5 class="card-header">Volgende shift</h5>-->
+<!--                    <div class="card-body d-flex justify-content-center">-->
+<!--                        <span class="badge bg-warning text-dark"><h3> <b>21</b>  minuten</h3></span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div> <!-- <div class="col-lg-9"> -->
 </div>
 
 {% endblock content %}

@@ -28,8 +28,8 @@
         </div>
 
         <div class="float-end mb-2">
-            <a class="btn btn-primary" hx-get="{% url 'occupation-add' %}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a></a>
-            <a class="btn btn-warning" hx-get="{% url 'planner-add' %}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a></a>
+            <a class="btn btn-info" style='background-color: #337ab7; border-color: #337ab7;' hx-get="{% url 'occupation-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a></a>
+            <a class="btn btn-warning" style='background-color: #da9b4e; border-color: #da9b4e;' hx-get="{% url 'planner-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a></a>
         </div>
     </div> <!-- col-12 -->
     <div class="col-12 overflow-auto">

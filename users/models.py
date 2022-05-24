@@ -19,7 +19,7 @@ class UserSpecialism(models.Model):
     def __str__(self):
         return f'{self.specialism}'
 
-default_specialism = UserSpecialism.objects.filter(specialism="Verkeersregelaar")[0]
+default_specialism = UserSpecialism.objects.filter(specialism="Verkeersregelaar")[0].pk
 
 class CustomUser(AbstractUser):
     phonenumber = PhoneNumberField(unique=True, null=True, blank=True, verbose_name='Telefoonnummer',
@@ -36,7 +36,7 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        maxsize = 1000
+        maxsize = 1200
         if self.image:
             self.image = process_image(self.image.path, self.pk, maxsize, media_folder='profile_pics')
             super().save(*args, **kwargs)

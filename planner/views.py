@@ -26,7 +26,7 @@ def planner(request, dayname=None):
     else:
         daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
 
-    alldays = ShiftDay.objects.filter(active=True)
+    alldays = ShiftDay.objects.filter(active=True).order_by('date')
     return render(request, 'planner/planner_list.html', {'currentday': dayname, 'alldays': alldays, 'daydate': daydate, })
 
 @staff_member_required
@@ -44,7 +44,8 @@ def plannertable(request, dayname):
     html = TableHeaderFooter('thead', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "<tbody>"
 
-    temp = []
+    from itertools import cycle
+    row_colors = cycle(['#ffffff', '#ededed'])
 
     for post in posts:
         # get data
@@ -59,13 +60,13 @@ def plannertable(request, dayname):
         for o in occupation:
             occ.append({'id': o['id'], 'start': toSeconds(o['date'], o['starttime'], reference=reference), 'end': toSeconds(o['date'], o['endtime'], reference=reference)})
 
-        temp.append(plan)
+
         planning, plannew, occnew = MakePlanning(occ[:], plan[:])  # pass copies  DO NOT DO ANYTHING WITH occnew, it is the non overlap only!
         LUT = plannew + occ
         occTable, plannewTable, finalTable = PlanningToArray(occ, plannew, time_start, time_end, resolution)
 
 
-        html += ArrayToTable(finalTable, post['post_fullname'], post['pk'], LUT)
+        html += ArrayToTable(finalTable, post['post_fullname'], post['pk'], LUT, dayname, next(row_colors))
 
     html += TableHeaderFooter('tfoot', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "</tbody>"
@@ -91,13 +92,13 @@ def planner_modify(request, pk, start=None, end=None):
                 })
 
     else:
-        start = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=start)
-        end = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=end)
+        starttime = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=start)
+        endtime = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=end)
 
-        form = ModifyPlanningPlanner(instance=plan_item, initial={'startime': start, 'endtime': end})
+        form = ModifyPlanningPlanner(instance=plan_item, initial={'starttime': starttime, 'endtime': endtime})
 
     return render(request, 'central/planningmodify_form.html', {
-        'form': form, 'plan_pk': plan_item.pk,
+        'form': form, 'plan_pk': plan_item.pk, 'start': start, 'end': end,
     })
 
 
@@ -107,7 +108,6 @@ def add_planning(request, pk=None):
         form = AddPlanningPlanner(request.POST)
         if form.is_valid():
             new_planning = form.save()
-            new_planning.confirmed = True
             new_planning.created_by = request.user
             new_planning.confirmed_by = request.user
             new_planning.save()
@@ -139,7 +139,6 @@ def add_occupation(request, pk=None):
         form = AddOccupationPlanner(request.POST)
         if form.is_valid():
             new_planning = form.save()
-            new_planning.confirmed = True
             new_planning.created_by = request.user
             new_planning.confirmed_by = request.user
             new_planning.save()
@@ -158,9 +157,17 @@ def add_occupation(request, pk=None):
         shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
         shiftend = list(ShiftTime.objects.all().values_list('timeend'))
         shiftend = [i[0].strftime("%H:%M") for i in shiftend]
+
+        import logging
+        logging.warning(f"get dayname: {request.GET.get('dayname')}")
+
+        dayname = request.GET.get('dayname')
+        day_preselected = ShiftDay.objects.filter(dayname=dayname)[0]
+        preselected = (day_preselected.date, day_preselected.dayname)
+
         if pk:
-            form = AddOccupationPlanner(initial={'post': str(pk)})
+            form = AddOccupationPlanner(initial={'post': str(pk), 'date': preselected, })
         else:
-            form = AddOccupationPlanner()
+            form = AddOccupationPlanner(initial={'date': preselected, })
         return render(request, 'central/planningadd_form.html',
                       {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend})

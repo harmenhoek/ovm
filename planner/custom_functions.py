@@ -30,20 +30,7 @@ def visualizePlanning(plan, time_start, time_end, resolution=900):
     TODO: make sure loop is executed at least once (planning must always show up once!)
     """
 
-    html = """
-        <style>
-            table, th, td {
-                border: 1px solid black;
-                border-collapse: collapse;
-            }
-            td {
-                width: 20px;
-                text-align: center;
-            }
-        </style>
-    """
-
-    html += "<table>"
+    html = "<table>"
     for i in plan:
         loc_start = math.floor(i['start'] / resolution)
         loc_end = math.ceil(i['end'] / resolution)
@@ -67,11 +54,12 @@ def MakePlanning(occ, plan):  # make planning here
     minimumLeft = 100  # minimum time left of planning and occ to be kept afterwards in seconds
     planning = []
 
+    # create a reference id (id2) to have a valid lookup later of the original planning entry
     id2 = 1
-    for o in occ:
+    for o in occ:  # outside loop, to  make sure every occ gets a id2?
         o['id2'] = id2
         id2 += 1
-    for p in plan:
+    for p in plan:  #both, no idea why it sometimes doesn't work
         p['id2'] = id2
         id2 += 1
 
@@ -79,8 +67,11 @@ def MakePlanning(occ, plan):  # make planning here
     while True:
         counter = 0
         for o in occ:
+
             overlap = []
             for p in plan:
+                p['id2'] = id2  # inside loop to make sure every split up gets a new id2.
+                id2 += 1
                 # find best overlap
                 ov = matchoverlap(o['start'], o['end'], p['start'], p['end'])
                 if len(ov) > 0:
@@ -253,14 +244,15 @@ def TableHeaderFooter(headerfoot, time_start=0, time_end=86400, resolution=900, 
 
     return html
 
-def ArrayToTable(planning, postname, postpk, LUT):
+def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
     html = ""
     for idx, row in enumerate(planning):
-        html += "<tr>"  # f2f2f2
+        html += f"<tr style='background-color:{rowcolor};'>"  #
 
         if idx == 0:
-            url = reverse('planner-add', args=str(postpk))
-            html += f"<td rowspan='{len(planning)}' style='width:75px;'><b>Post {postname} <a hx-get='{url}' hx-target='#dialoghtmx' style='cursor:pointer;'><i class='fas fa-plus'></i></a></td>"
+            url = f"{reverse('occupation-add', args=str(postpk))}?dayname={dayname}"
+
+            html += f"<td rowspan='{len(planning)}' class='rowheader'><b>Post {postname} <a class='btn btn-info badge text-dark' hx-get='{url}' hx-target='#dialoghtmx' style='cursor:pointer; background-color: #337ab7; border-color: #337ab7;'><i class='fas fa-plus'></i></a></td>"
         else:
             html += "<td style='display:none;'></td>"  # fill with invisible cells (rowspan not supported by DataTables)
 
@@ -285,11 +277,11 @@ def ArrayToTable(planning, postname, postpk, LUT):
                 url = reverse('planner-modify', args=(details.pk, start, end))
 
                 if not details.user:  # than planning
-                    html += f"<td colspan='{spans[idx]}' style='background-color: #ffc107; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i><b>Open</b></i></td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i></i></td>"
                 elif details.confirmed:
-                    html += f"<td colspan='{spans[idx]}' style='background-color: #28a745; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"  #{details.pk} | {start} - {end}
                 else:
-                    html += f"<td colspan='{spans[idx]}' style='background-color: #007bff; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"
                 for i in range(spans[idx]-1):  # fill with invisible cells (colspan not supported by DataTables)
                     html += "<td style='display:none;'></td>"
 

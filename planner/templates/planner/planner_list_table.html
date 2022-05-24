@@ -1,3 +1,25 @@
+
 <table id="planner_list" class="table cell-border w-100">
-            {{ html|safe }}
-        </table>
+    {{ html|safe }}
+</table>
+
+<style>
+    #planner_list td {
+        vertical-align: middle;
+    }
+    td.cutoverflow {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 20px;
+    }
+
+    td.rowheader {
+        width: 1%;
+    white-space: nowrap;
+    }
+
+
+
+</style>
+

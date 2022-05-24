@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
@@ -16,12 +16,10 @@ from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy, reverse
 from users.forms import UserUpdateForm
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, FileResponse
+from django.http import HttpResponse
 from .forms import ModifyPlanningDashboard, AddPlanningDashboard
 import json
-from datetime import datetime, date
+from datetime import date
 
 @method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
@@ -32,6 +30,13 @@ class UsersView(LoginRequiredMixin, ListView):
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = get_user_model()
     template_name = 'central/user_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        datenow = date.today()
+        context['planning'] = Planning.objects.filter(user=self.object.pk, removed=False, date__gte=datenow)
+
+        return context
 
 
 @method_decorator(staff_member_required, name='dispatch')
@@ -62,6 +67,7 @@ class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         import unidecode
         # form.instance.username = unidecode.unidecode(f"{form.instance.first_name.lower()}{form.instance.last_name.lower()}").lower().replace(" ", "")
         form.instance.username = form.instance.email
+        form.instance.is_active = False
         response = super(UserCreateView, self).form_valid(form)
         self.object = form.save()
         return response
@@ -86,6 +92,7 @@ class PostListView(LoginRequiredMixin, ListView):
 
         return context
 
+@staff_member_required
 def about(request):
     shiftstart = list(ShiftTime.objects.all().values_list('timestart'))
     shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
@@ -110,39 +117,34 @@ class PostMapView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         # load status for map
-        from datetime import datetime, timedelta, date
-        from django.db.models import Count, F
+        from datetime import date, datetime
         datetimenow = datetime.now()
         datenow = date.today()
 
-        # created_on__contains=date
-
         # now + overdue
-
         status_orange = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
-                                                starttime__lt=datetimenow, endtime__lt=datetimenow)\
+                                                endtime__lt=datetimenow)\
             .exclude(user=None).values('post').distinct()
 
         # now + not confirmed (planning)
         status_blue = Planning.objects.filter(removed=False, confirmed=False, date=datenow,
                                               starttime__lt=datetimenow, endtime__gt=datetimenow). \
-            exclude(pk__in=status_orange, user=None).values('post').distinct()
+            exclude(post__pk__in=status_orange).exclude(user=None).values('post').distinct()
 
         # now + confirmed
         status_green = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
                                                starttime__lt=datetimenow, endtime__gt=datetimenow).\
-            exclude(pk__in=status_orange | status_blue, user=None).values('post').distinct()
+            exclude(post__pk__in=status_orange).exclude(post__pk__in=status_blue).exclude(user=None).values('post').distinct()
 
 
         status_orange_2 = [{i['post']: 'warning'} for i in status_orange]
-        status_blue_2 = [{i['post']: 'primary'} for i in status_blue]
+        status_blue_2 = [{i['post']: 'info'} for i in status_blue]
         status_green_2 = [{i['post']: 'success'} for i in status_green]
         context['status'] = {k: v for element in status_orange_2 + status_blue_2 + status_green_2 for k, v in element.items()}
 
         context['status_green'] = status_green
         context['status_orange'] = status_orange
         context['status_blue'] = status_blue
-
 
         return context
 
@@ -171,21 +173,21 @@ class PostOccupationView(LoginRequiredMixin, ListView):
             postslug=self.kwargs.get('postslug')).first()  # must first since no pk is used
 
         occ_orange = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                             confirmed=True,
-                                             starttime__lt=datetimenow, endtime__lt=datetimenow,
+                                             confirmed=True, endtime__lt=datetimenow,
                                              date=datenow).exclude(user=None)
         occ_blue = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                           confirmed=False,
-                                           starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                           confirmed=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
                                            date=datenow).exclude(user=None)
         occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                            confirmed=True,
-                                            starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                            confirmed=True, starttime__lt=datetimenow, endtime__gt=datetimenow,
                                            date=datenow).exclude(user=None)
-        occ = occ_orange | occ_blue | occ_green
-        occ_color = ["warning" for i in range(occ_orange.count())] + \
-                    ["primary" for i in range(occ_blue.count())] + \
-                    ["success" for i in range(occ_green.count())]
+
+        from itertools import chain
+        occ = list(chain(occ_orange, occ_blue, occ_green))
+        # occ = occ_orange | occ_blue | occ_green
+        occ_color = [("warning", "dark") for i in range(occ_orange.count())] + \
+                    [("info", "dark") for i in range(occ_blue.count())] + \
+                    [("success", "white") for i in range(occ_green.count())]
         context['current_occupation'] = zip(occ, occ_color)
 
         return context
@@ -221,22 +223,81 @@ def planning_approve(request, pk):
 @staff_member_required
 def planning_remove(request, pk):
     plan_item = Planning.objects.get(pk=pk)
+    starttime_form = request.GET.get('start')
+    endtime_form = request.GET.get('end')
+
+
+    import logging
+    logging.warning(f"starttime_form: {starttime_form}")
+    logging.warning(f"endtime_form: {endtime_form}")
 
     if request.method == "POST":
-        plan_item.removed = True
-        plan_item.removed_by = request.user
-        plan_item.save()
+        if not plan_item.user and request.POST['start'] and request.POST['end']:  # for planning we want to change times, not remove everything
+            start = int(request.POST['start'])
+            end = int(request.POST['end'])
+            logging.warning(f"start: {start}")
+            logging.warning(f"end: {end}")
+            from datetime import datetime, timedelta, date
+            import datetime
+            starttime_form = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=start)
+            endtime_form = datetime.datetime.combine(date.today(), datetime.time(0, 0)) + datetime.timedelta(seconds=end)
+            starttime_form = starttime_form.time()
+            endtime_form = endtime_form.time()
+            logging.warning(f"starttime_form: {starttime_form}")
+            logging.warning(f"endtime_form: {endtime_form}")
+            logging.warning(f"plan_item.starttime: {plan_item.starttime}")
+            logging.warning(f"plan_item.endtime: {plan_item.endtime}")
+            logging.warning(f"starttime_form == plan_item.starttime: {starttime_form == plan_item.starttime}")
+            logging.warning(f"endtime_form == plan_item.endtime: {endtime_form == plan_item.endtime}")
+
+            if starttime_form is not plan_item.starttime or endtime_form is not plan_item.endtime:
+                # this means not all the planning should be deleted
+                # now 2 situations: start or end is removed (cut off from planning). Or inbetween is removed.
+                if starttime_form == plan_item.starttime:  # start is trimmed of
+                    logging.warning(f"START TRIMMED OFF")
+                    plan_item.starttime = endtime_form
+                    plan_item.save()
+                elif endtime_form == plan_item.endtime:  # end is trimmed of
+                    plan_item.endtime = starttime_form
+                    logging.warning(f"END TRIMMED OFF")
+                    plan_item.save()
+                else:  # inbetween is cut cut off: make 2 copies of new one, delete old one
+                    logging.warning(f"I moved to the ELSE clause")
+                    plan_item.removed = True
+                    plan_item.save()
+
+                    plan_item.pk = None  # makes a copy
+                    plan_item.endtime = starttime_form
+                    plan_item.copy_of = pk
+                    plan_item.removed = False
+                    plan_item.save()
+
+                    # get original again and make a second copy
+                    plan_item = Planning.objects.get(pk=pk)
+                    plan_item.pk = None  # makes a copy
+                    plan_item.starttime = endtime_form
+                    plan_item.copy_of = pk
+                    plan_item.removed = False
+                    plan_item.save()
+            else:
+                plan_item.removed = True
+                plan_item.save()
+        else:
+            plan_item.removed = True
+            plan_item.removed_by = request.user
+            plan_item.save()
+
         return HttpResponse(
             status=204,
             headers={
                 'HX-Trigger': json.dumps({
                     "planningUpdated": None,
                     "postmapUpdated": None,
-                    "showMessage": f"<b>{plan_item.user}</b> verwijderd van post <b>{plan_item.post}</b>."
+                    "showMessage": f"<b>{plan_item.user if plan_item.user else 'Planning'}</b> verwijderd van post <b>{plan_item.post}</b>."
                 })
             })
 
-    return render(request, 'central/planningremove_form.html')
+    return render(request, f"central/planningremove_form.html", {'start': starttime_form, 'end': endtime_form, } )
 
 @staff_member_required
 def planning_add_dashboard(request, pk='None'):

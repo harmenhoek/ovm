@@ -155,10 +155,7 @@ LANGUAGES = (
 USE_L10N = False  # ignore all browser settings! Needed, otherwise decimal seperator is set to ',' by browser ...
 DECIMAL_SEPARATOR = '.'  # YES PLEASE
 
-try:
-    from ovm.local_settings import *
-except ImportError as e:
-    raise Exception(e)
+
 
 
 # Email
@@ -168,3 +165,16 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
+# Max upload size
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440*10
+MAX_UPLOAD_FILE_SIZE = False
+IMAGE_COMPRESSION = True
+IMAGE_COMPRESSION_RATIO = 0.25
+
+
+
+
+try:
+    from ovm.local_settings import *
+except ImportError as e:
+    raise Exception(e)

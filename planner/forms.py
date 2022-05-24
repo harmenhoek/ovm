@@ -48,9 +48,11 @@ class AddPlanningPlanner(forms.ModelForm):
 
     class Meta:
         model = Planning
+        # post = forms.ModelChoiceField(queryset=Planning.objects.values('post').order_by('-post__post_fullname'))
         fields = ['post', 'date', 'slider', 'starttime', 'endtime', 'comment']
 
-        options = ShiftDay.objects.filter(active=True)
+
+        options = ShiftDay.objects.filter(active=True).order_by('date')
         CHOICES = ((x.date, x.dayname) for x in options)
 
         widgets = {
@@ -69,9 +71,12 @@ class AddPlanningPlanner(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        datenow = date.today()
-        if ShiftDay.objects.filter(date=datenow):
-            self.fields['date'].initial = (ShiftDay.objects.filter(date=datenow)[0].date, ShiftDay.objects.filter(date=datenow)[0].dayname)
+
+        self.fields['post'].queryset = self.fields['post'].queryset.order_by('post_fullname')  # sort option list (remaining help text, etc)
+
+        # datenow = date.today()
+        # if ShiftDay.objects.filter(date=datenow):  # if current day is a Shiftday, make sure this one is initiall selected.
+        #     self.fields['date'].initial = (ShiftDay.objects.filter(date=datenow)[0].date, ShiftDay.objects.filter(date=datenow)[0].dayname)
 
         self.fields['starttime'].required = True
         self.fields['endtime'].required = True
@@ -136,10 +141,16 @@ class AddOccupationPlanner(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        datenow = date.today()
-        if ShiftDay.objects.filter(date=datenow):
-            self.fields['date'].initial = (
-            ShiftDay.objects.filter(date=datenow)[0].date, ShiftDay.objects.filter(date=datenow)[0].dayname)
+
+        self.fields['post'].queryset = self.fields['post'].queryset.order_by('post_fullname')  # sort option list (remaining help text, etc)
+        self.fields['user'].queryset = self.fields['user'].queryset.order_by('first_name')  # sort option list (remaining help text, etc)
+
+
+
+        # datenow = date.today() #TODO fix this: shouldn't be current date, should be selected tab date!
+        # if ShiftDay.objects.filter(date=datenow):
+        #     self.fields['date'].initial = (
+        #     ShiftDay.objects.filter(date=datenow)[0].date, ShiftDay.objects.filter(date=datenow)[0].dayname)
 
         self.fields['starttime'].required = True
         self.fields['endtime'].required = True

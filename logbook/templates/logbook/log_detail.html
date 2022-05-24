@@ -47,7 +47,6 @@
                             {% endif %}
                         {% endif %}
                         {% if object.file2 %}
-                        {{ object.file2.url|checkifimage }}
                             {% if object.file2.url|checkifimage %}
                                 <img src="{{ object.file2.url }}" class="w-100"/>
                             {% else %}

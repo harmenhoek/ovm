@@ -13,7 +13,7 @@
     </div>
     <div class="modal-footer justify-content-between">
         <div>
-            <a class="btn btn-danger" hx-get="{% url 'planning-remove' plan_pk %}" hx-target="#dialoghtmx"><i class="fas fa-trash"></i> Verwijderen</a>
+            <a class="btn btn-danger" hx-get="{% url 'planning-remove' plan_pk %}?start={{ start }}&end={{ end }}" hx-target="#dialoghtmx"><i class="fas fa-trash"></i> Verwijderen</a>
         </div>
         <div>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>

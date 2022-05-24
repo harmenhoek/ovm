@@ -1,34 +1,16 @@
-TODO
-- prevent duplicate planning of people
-- user added by
-- security login_required
-- exlude users from adding to post, if already on post
-- Upload post-map after adding/confirming/deleting/modifying
-- before confirming, ensure user is not onother post
-- if active menu header
-- User modify
-- planning
-- logbook modals
-- data tooltips no longer work
-- image upload logbook + users
-- user show planning
-- after save user, update modal!
-
-- add planner not correct yet (only future times supported)
-- Update table of user and logbook after hx done.
-- footer fix
-- menu user topright
-- logout: use hx message and directly redirect to login
-- file processing logbook: size, and resize if image?
-- fancy image show everywhere
-- edit post occ does not work anymore:
-    File "/Users/harmenhoek/Dev/OVM/central/forms.py", line 46, in clean
-    if endtime < starttime:
-TypeError: '<' not supported between instances of 'datetime.time' and 'NoneType'
 
 
-- check , removed=False in all queries
-- table planner: wrap text or something. Keep cell width constant.
-- if user updated on home, reload post occupation too
 
-Planning remove in planner!
+
+Colors:
+Planning: #da9b4e
+Left post: #587793
+Planned: 337ab7
+Confirmed: 5cb85c
+Needs confirmation: 74a9d8
+
+
+Dashboard
+Panel-title TEXT-BG
+blue 31708f d9edf7
+green 3c763d dff0d8

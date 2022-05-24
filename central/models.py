@@ -69,6 +69,7 @@ class Planning(models.Model):
     confirmed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_confirmed_by')
     removed = models.BooleanField(default=False, verbose_name='Verwijderd')
     removed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_removed_by')
+    copy_of = models.IntegerField(null=True, blank=True)
     history = HistoricalRecords()
 
     def __str__(self):

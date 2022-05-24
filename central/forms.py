@@ -56,6 +56,7 @@ class ModifyPlanningDashboard(forms.ModelForm):
 
 
 class AddPlanningDashboard(forms.ModelForm):
+    # its actually just occupation that is added, not planning
 
     # from users.models import CustomUser
     # from django.forms import ModelChoiceField

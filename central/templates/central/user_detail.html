@@ -13,7 +13,7 @@
             {% if object.image %}
                 <tr>
                     <th scope="row"></th>
-                    <td><img class="rounded mr-0 w-100" src="{{ object.image.url }}"> </td>
+                    <td><img class="rounded mr-0 w-100 img-thumbnail" src="{{ object.image.url }}"> </td>
                 </tr>
             {% endif %}
             <tr>
@@ -57,6 +57,16 @@
             <tr>
                 <th scope="row">Omschrijving</th>
                 <td>{{ object.description|nonetounknown|safe }}</td>
+            </tr>
+            <tr>
+                <th scope="row">Persoonlijke planning</th>
+                <td>
+                    {% for plan in planning %}
+                        {{ plan.date|date:'d-m-Y' }} {{ plan.starttime|date:'H:i' }} - {{ plan.endtime|date:'H:i' }}
+                    {% endfor %}
+
+
+                </td>
             </tr>
 
         </tbody>

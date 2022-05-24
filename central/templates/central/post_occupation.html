@@ -8,10 +8,11 @@
  </h5>
             <div class="card-body">
 <div hx-get="{% url 'post-occupation' current_post.postslug %}" hx-trigger="every 30s">
-{{ current_occupation.1 }}
+
+
 {% for occ, occ_color in current_occupation %}
-                <div class="card mb-3 border-{{ occ_color }}">
-                    <div class="card-header h6 bg-{{ occ_color }} text-white">{{ occ.user.first_name }} {{ occ.user.last_name }}
+                <div class="card mb-3 border-{{ occ_color.0 }}">
+                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">{{ occ.user.first_name }} {{ occ.user.last_name }}
 
                         {% if occ.confirmed %}
                             <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Verwijderen van post">
@@ -33,21 +34,33 @@
 
                     <div class="card-body">
 
-
+                    <style>
+                        .image{
+                            position:relative;
+                            overflow:hidden;
+                            padding-bottom:100%;
+                        }
+                        .image img{
+                            position:absolute;
+                        }
+                    </style>
 
                         <div class="row">
                             <div class="col-4">
-                                {% if occ.user.image %}
-                                    <img src="{{ occ.user.image.url }}" class="w-100 rounded"/><br>
-                                {% else %}
-                                    <img src="{% static 'central/default.png' %}" class="w-100 rounded"/><br>
-                                {% endif %}
-
-                                <a hx-get="{% url 'user-detail' occ.user.pk %}" hx-target="#dialoghtmx" class="btn btn-secondary btn-sm mt-2 w-100"><i class="fas fa-info"></i> Meer</a>
-
+                                <div class="img-thumbnail">
+                                    <div class="image">
+                                        {% if occ.user.image %}
+                                            <img src="{{ occ.user.image.url }}" class="w-100 rounded" />
+                                        {% else %}
+                                            <img src="{% static 'central/default.png' %}" class="w-100 rounded" />
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <a hx-get="{% url 'user-detail' occ.user.pk %}" hx-target="#dialoghtmx" class="btn badge bg-secondary btn-sm mt-2 w-100"><i class="fas fa-info"></i> Persoon</a>
                             </div>
                             <div class="col-8 px-0">
                                 <b>{{ occ.user.first_name }} {{ occ.user.last_name }}</b><br>
+
                                 {% if occ.user.phonenumber %}
                                     {{ occ.user.phonenumber|nonetounknown|safe }}<br>
                                 {% endif %}

@@ -122,17 +122,17 @@ class PostMapView(LoginRequiredMixin, ListView):
         datenow = date.today()
 
         # now + overdue
-        status_orange = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
+        status_orange = Planning.objects.filter(removed=False, signed_off=False, confirmed=True, date=datenow,
                                                 endtime__lt=datetimenow)\
             .exclude(user=None).values('post').distinct()
 
         # now + not confirmed (planning)
-        status_blue = Planning.objects.filter(removed=False, confirmed=False, date=datenow,
+        status_blue = Planning.objects.filter(removed=False, signed_off=False, confirmed=False, date=datenow,
                                               starttime__lt=datetimenow, endtime__gt=datetimenow). \
             exclude(post__pk__in=status_orange).exclude(user=None).values('post').distinct()
 
         # now + confirmed
-        status_green = Planning.objects.filter(removed=False, confirmed=True, date=datenow,
+        status_green = Planning.objects.filter(removed=False, signed_off=False, confirmed=True, date=datenow,
                                                starttime__lt=datetimenow, endtime__gt=datetimenow).\
             exclude(post__pk__in=status_orange).exclude(post__pk__in=status_blue).exclude(user=None).values('post').distinct()
 
@@ -173,13 +173,13 @@ class PostOccupationView(LoginRequiredMixin, ListView):
             postslug=self.kwargs.get('postslug')).first()  # must first since no pk is used
 
         occ_orange = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                             confirmed=True, endtime__lt=datetimenow,
+                                             confirmed=True, signed_off=False, endtime__lt=datetimenow,
                                              date=datenow).exclude(user=None)
         occ_blue = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                           confirmed=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                           confirmed=False, signed_off=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
                                            date=datenow).exclude(user=None)
         occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                            confirmed=True, starttime__lt=datetimenow, endtime__gt=datetimenow,
+                                            confirmed=True, signed_off=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
                                            date=datenow).exclude(user=None)
 
         from itertools import chain
@@ -219,6 +219,29 @@ def planning_approve(request, pk):
             })
 
     return render(request, 'central/planningapprove_form.html')
+
+@staff_member_required
+def planning_signoff(request, pk):
+    plan_item = Planning.objects.get(pk=pk)
+
+    if request.method == "POST":
+        plan_item.signed_off = True
+        plan_item.signed_off_by = request.user
+        from datetime import datetime
+        plan_item.signed_off_time = datetime.now()
+        plan_item.save()
+
+        return HttpResponse(
+            status=204,
+            headers={
+                'HX-Trigger': json.dumps({
+                    "planningUpdated": None,
+                    "postmapUpdated": None,
+                    "showMessage": f"<b>{plan_item.user if plan_item.user else 'Planning'}</b> afgemeld van post <b>{plan_item.post}</b>."
+                })
+            })
+
+    return render(request, f"central/planningsignoff_form.html",)
 
 @staff_member_required
 def planning_remove(request, pk):

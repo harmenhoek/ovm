@@ -69,8 +69,11 @@ class Planning(models.Model):
     confirmed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_confirmed_by')
     removed = models.BooleanField(default=False, verbose_name='Verwijderd')
     removed_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='planning_removed_by')
+    signed_off = models.BooleanField(default=False, verbose_name='Afgemeld')
+    signed_off_time = models.DateTimeField(null=True, blank=True, verbose_name='Afmeldtijd')
+    signed_off_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='signed_of_by')
     copy_of = models.IntegerField(null=True, blank=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.pk} -- post {self.post} | {self.user}  - confirmed: {self.confirmed} - deleted: {self.removed}"
+        return f"{self.pk} -- post {self.post} | {self.user}  - confirmed: {self.confirmed} - deleted: {self.removed} - signedoff: {self.signed_off}"

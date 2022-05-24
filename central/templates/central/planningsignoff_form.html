@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+{% block content %}
+
+<form hx-post="{{ request.path }}">
+    {% csrf_token %}
+    <input type="hidden" id="start" name="start" value="{{ start }}">
+    <input type="hidden" id="end" name="end" value="{{ end }}">
+    <div class="modal-header">
+        Afmelden van post
+    </div>
+    <div class="modal-body">
+        Weet je zeker dat je deze persoon wil afmelden van deze post?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+        <button class="btn btn-warning" type="submit">Afmelden</button>
+    </div>
+</form>
+
+
+
+{% endblock content %}
+

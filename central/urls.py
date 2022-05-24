@@ -26,6 +26,7 @@ urlpatterns = [
     path('user/<int:pk>/update/', UserUpdateView.as_view(), name='user-update'),
     path('planning/<int:pk>/approve/', views.planning_approve, name='planning-approve'),
     path('planning/<int:pk>/remove/', views.planning_remove, name='planning-remove'),
+    path('planning/<int:pk>/signoff/', views.planning_signoff, name='planning-signoff'),
     path('planning/<int:pk>/modify/', views.planning_modify, name='planning-modify'),
     path('planning/add/<int:pk>/', views.planning_add_dashboard, name='planning-add'),
     path('planning/add/', views.planning_add_dashboard, name='planning-add'),

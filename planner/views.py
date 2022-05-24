@@ -36,6 +36,7 @@ def plannertable(request, dayname):
     time_end = 24 * 60 * 60
     headercolspan = 4
 
+
     daydate = ShiftDay.objects.get(dayname__iexact=dayname).date
 
     reference = toSeconds(daydate, datetime.time(0, 0))
@@ -65,6 +66,10 @@ def plannertable(request, dayname):
         LUT = plannew + occ
         occTable, plannewTable, finalTable = PlanningToArray(occ, plannew, time_start, time_end, resolution)
 
+        import logging
+        logging.warning(f"0000000000 planning: {planning}")
+        logging.warning(f"0000000000 plannew: {plannew}")
+        logging.warning(f"0000000000 occnew: {occnew}")
 
         html += ArrayToTable(finalTable, post['post_fullname'], post['pk'], LUT, dayname, next(row_colors))
 
@@ -126,10 +131,15 @@ def add_planning(request, pk=None):
         shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
         shiftend = list(ShiftTime.objects.all().values_list('timeend'))
         shiftend = [i[0].strftime("%H:%M") for i in shiftend]
+
+        dayname = request.GET.get('dayname')
+        day_preselected = ShiftDay.objects.filter(dayname=dayname)[0]
+        preselected = (day_preselected.date, day_preselected.dayname)
+
         if pk:
-            form = AddPlanningPlanner(initial={'post': str(pk)})
+            form = AddPlanningPlanner(initial={'post': str(pk), 'date': preselected, })
         else:
-            form = AddPlanningPlanner()
+            form = AddPlanningPlanner(initial={'date': preselected, })
         return render(request, 'central/planningadd_form.html', {'form': form, 'shiftstart': shiftstart, 'shiftend': shiftend, 'planning': True, })
 
 
@@ -157,9 +167,6 @@ def add_occupation(request, pk=None):
         shiftstart = [i[0].strftime("%H:%M") for i in shiftstart]
         shiftend = list(ShiftTime.objects.all().values_list('timeend'))
         shiftend = [i[0].strftime("%H:%M") for i in shiftend]
-
-        import logging
-        logging.warning(f"get dayname: {request.GET.get('dayname')}")
 
         dayname = request.GET.get('dayname')
         day_preselected = ShiftDay.objects.filter(dayname=dayname)[0]

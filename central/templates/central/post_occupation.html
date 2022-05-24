@@ -15,14 +15,17 @@
                     <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">{{ occ.user.first_name }} {{ occ.user.last_name }}
 
                         {% if occ.confirmed %}
-                            <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Verwijderen van post">
-                                <i class="fas fa-trash" style="cursor: pointer" hx-get="{% url 'planning-remove' occ.pk %}" hx-target="#dialoghtmx"></i>
+                            <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Afmelden van post">
+                                <i class="fas fa-sign-out-alt" style="cursor: pointer" hx-get="{% url 'planning-signoff' occ.pk %}" hx-target="#dialoghtmx"></i>
                              </div>
-                        {% else %}
 
-                            <div class="float-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Bevestigen op post">
+                        {% else %}
+                            <div class="float-end mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Bevestigen op post">
                                 <i class="fas fa-check" style="cursor: pointer" hx-get="{% url 'planning-approve' occ.pk %}" hx-target="#dialoghtmx"></i>
                             </div>
+                            <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Planning verwijderen">
+                                <i class="fas fa-trash" style="cursor: pointer" hx-get="{% url 'planning-remove' occ.pk %}" hx-target="#dialoghtmx"></i>
+                             </div>
 
                         {% endif %}
                             <div class="float-end mx-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Aanpassen">

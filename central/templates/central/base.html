@@ -101,6 +101,9 @@
             <img src="{% if user.image %}{{ user.image.url }}{% else %}{% static 'central/default.png' %}{% endif %}" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser2">
+            {% if request.user.is_superuser %}
+                <li><a class="dropdown-item" hx-get="{% url 'importer' %}" hx-target="#dialoghtmx"><i class="fas fa-"></i> Import data</a></li>
+            {% endif %}
             <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Uitloggen</a></li>
           </ul>
         </div>

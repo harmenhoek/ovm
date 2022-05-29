@@ -1,7 +1,3 @@
-
-
-
-
 Colors:
 Planning: #da9b4e
 Left post: #587793

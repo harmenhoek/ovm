@@ -1,0 +1,29 @@
+{% load crispy_forms_tags %}
+{% block content %}
+{% load central_customfilters %}
+{{ form.media }}
+
+<h4>It does not check for duplicates!</h4>
+
+<p>Post: post_fullname, postslug, maplocation_x (percentage 0-100), maplocation_y (percentage 0-100), description, verkeersregelaar</p>
+<p>User: first_name, last_name, email, dateofbirth (1990-04-02) phonenumber (+31612065985), description, specialism ("1,2")</p>
+<p>Planning: post (postslug), firstname, lastname, starttime (13:00), endtime (13:00), date (2022-04-05), comment</p>
+
+<form hx-post="{{ request.path }}" hx-encoding='multipart/form-data'>
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title">Import data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {{ form|crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+        <button class="btn btn-success" type="submit">Import</button>
+    </div>
+</form>
+
+
+{% endblock content %}

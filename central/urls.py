@@ -30,6 +30,7 @@ urlpatterns = [
     path('planning/<int:pk>/modify/', views.planning_modify, name='planning-modify'),
     path('planning/add/<int:pk>/', views.planning_add_dashboard, name='planning-add'),
     path('planning/add/', views.planning_add_dashboard, name='planning-add'),
+    path('import/', views.importer, name='importer'),
     # path('planning/<int:pk>/modify/', PlanningModify.as_view(), name='planning-modify'),
 
  ]

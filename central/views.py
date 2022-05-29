@@ -17,14 +17,18 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy, reverse
 from users.forms import UserUpdateForm
 from django.http import HttpResponse
-from .forms import ModifyPlanningDashboard, AddPlanningDashboard
+from .forms import ModifyPlanningDashboard, AddPlanningDashboard, ImportData
 import json
 from datetime import date
+import csv
 
 @method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
     model = get_user_model()
     template_name = 'central/user_list.html'
+
+    def get_queryset(self):
+        return get_user_model().objects.filter(is_superuser=False, is_active=True)
 
 @method_decorator(staff_member_required, name='dispatch')
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -77,7 +81,7 @@ class UserCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         context['button'] = 'Toevoegen'
         return context
 
-@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(staff_member_required(login_url='login'), name='dispatch')
 class PostListView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'central/home.html'  # <app>/<model>_<viewtype>.html
@@ -381,3 +385,75 @@ def planning_modify(request, pk):
     return render(request, 'central/planningmodify_form.html', {
         'form': form, 'plan_pk': plan_item.pk,
     })
+
+
+
+@staff_member_required
+def importer(request):
+    if request.method == "POST":
+        form = ImportData(request.POST, request.FILES)
+        if form.is_valid():
+            datatype = form.cleaned_data['datatype']
+            csvfile = form.cleaned_data['csvfile']
+
+            # TODO: first get_or_create with firstname-lastname or email, then add rest of data.
+
+            from io import TextIOWrapper
+            f = TextIOWrapper(csvfile, encoding='utf-8-sig') # encoding=request.encoding
+            reader = csv.reader(f)
+            counter = 0
+            for row in reader:
+                counter += 1
+                if datatype == "posts":
+                    _, created = Post.objects.get_or_create(
+                        post_fullname=row[0],
+                        postslug=row[1],
+                        maplocation_x=row[2],
+                        maplocation_y=row[3],
+                        description=row[4],
+                        verkeersregelaar=row[5],
+                    )
+                elif datatype == "users":
+                    # TODO: django.db.utils.IntegrityError: UNIQUE constraint failed: users_customuser.phonenumber
+                    object, created = get_user_model().objects.get_or_create(
+                        first_name=row[0],
+                        last_name=row[1],
+                        email=row[2],
+                        dateofbirth=row[3],
+                        phonenumber=row[4],
+                        description=row[5],
+                        username=row[2],
+                    )
+                    specalisms = [int(x) for x in row[6].replace('"', '').split(',')]
+                    object.specialism.set(specalisms)
+                elif datatype == "planning":
+                    # TODO: add error messages! If user not found ...
+                    import logging
+                    logging.warning(f"post: --{int(float(row[0]))}--")
+                    _, created = Planning.objects.get_or_create(
+                        post=Post.objects.get(postslug=row[0]),
+                        user=get_user_model().objects.get(first_name=row[1], last_name=row[2]),
+                        starttime=row[3],
+                        endtime=row[4],
+                        date=row[5],
+                        comment=row[6],
+                    )
+
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    'HX-Trigger': json.dumps({
+                        "planningUpdated": None,
+                        "postmapUpdated": None,
+                        "showMessage": f"Successfully imported {counter} rows."
+                    })
+                })
+
+    else:
+        form = ImportData()
+
+    return render(request, 'central/import_form.html', {'form': form, })
+
+# if not csv_file.name.endswith('.csv'):
+#         messages.error(request, 'THIS IS NOT A CSV FILE')

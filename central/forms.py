@@ -5,6 +5,18 @@ from .widgets import DatePickerInput, TimePickerInput, DateTimePickerInput
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
 
+
+IMPORT_CHOICES = (
+    ("posts", "Posts"),
+    ("users", "Users"),
+    ("planning", "Planning"),
+)
+
+class ImportData(forms.Form):
+    datatype = forms.ChoiceField(choices=IMPORT_CHOICES, )
+    csvfile = forms.FileField()
+
+
 class ModifyPlanningDashboard(forms.ModelForm):
     class Meta:
         model = Planning

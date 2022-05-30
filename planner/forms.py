@@ -133,7 +133,7 @@ class AddOccupationPlanner(forms.ModelForm):
         if endtime < starttime:
             raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
-        plan = Planning.objects.filter(user=user, starttime__lte=endtime, endtime__gte=starttime, date=date,
+        plan = Planning.objects.filter(user=user, starttime__lt=endtime, endtime__gt=starttime, date=date,
                                        removed=False)
         if plan:
             raise ValidationError(

@@ -419,13 +419,15 @@ def importer(request):
                         first_name=row[0],
                         last_name=row[1],
                         email=row[2],
-                        dateofbirth=row[3],
                         phonenumber=row[4],
                         description=row[5],
                         username=row[2],
                     )
                     specalisms = [int(x) for x in row[6].replace('"', '').split(',')]
                     object.specialism.set(specalisms)
+                    if row[3]:
+                        object.dateofbirth.set(row[3])
+
                 elif datatype == "planning":
                     # TODO: add error messages! If user not found ...
                     import logging

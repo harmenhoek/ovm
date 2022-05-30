@@ -23,7 +23,7 @@
             <div class="card-body">
                 <div class="btn-group">
             {% for day in alldays %}
-                <a href="{% url 'planner' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }} ({{ day.date }})</a>
+                <a href="{% url 'planner' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>
             {% endfor %}
             </div>
 

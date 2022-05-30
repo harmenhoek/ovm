@@ -380,18 +380,18 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
                 end = info['end']
 
                 url = reverse('planner-modify', args=(details.pk, start, end))
+                comment = f"({details.comment})" if details.comment else ""
 
                 if not details.user:  # than planning
-                    comment = f"({details.comment})" if details.comment else ""
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant {comment}</i></td>"
                 elif details.confirmed and not details.signed_off:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
                 elif details.signed_off:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #587793; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #587793; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
                 elif details.starttime <= datetime.datetime.now().time():  # needs confirmation
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #74a9d8; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #74a9d8; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
                 else:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"
                 for i in range(spans[idx]-1):  # fill with invisible cells (colspan not supported by DataTables)
                     html += "<td style='display:none;'></td>"
 

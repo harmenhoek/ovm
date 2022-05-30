@@ -24,7 +24,7 @@ class ModifyPlanningPlanner(forms.ModelForm):
         if endtime < starttime:
             raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
-        plan = Planning.objects.filter(user=user, starttime__lte=endtime, endtime__gte=starttime, date=date, removed=False)
+        plan = Planning.objects.filter(user=user, starttime__lt=endtime, endtime__gt=starttime, date=date, removed=False)
         if plan:
             if plan[0].user.pk is not user.pk:  # one extra validation here, since user is already on a post, this one.
                 # we specifically request [0], since there should only be 1 result! We cannot use .get since queryset might return empty

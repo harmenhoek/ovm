@@ -6,3 +6,245 @@ Not Found: /media/profile_pics/1_193644890025600144.jpg
 "GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
 Not Found: /media/profile_pics/1_193644890025600144.jpg
 "GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Zaterdag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Zaterdag/ HTTP/1.1" 500 74181
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Vandaag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Vandaag/ HTTP/1.1" 500 77280
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Maandag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Maandag/ HTTP/1.1" 500 71138
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Zondag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Zondag/ HTTP/1.1" 500 71654
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Zondag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Zondag/ HTTP/1.1" 500 71654
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Zondag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Zondag/ HTTP/1.1" 500 71654
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Internal Server Error: /planner/planner_table/day/Zondag/
+Traceback (most recent call last):
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/harmenhoek/Dev/OVM/venv/lib/python3.8/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/harmenhoek/Dev/OVM/planner/views.py", line 74, in plannertable
+    html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+KeyError: 'postslug'
+"GET /planner/planner_table/day/Zondag/ HTTP/1.1" 500 71654
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /favicon.ico
+"GET /favicon.ico HTTP/1.1" 404 6682
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995
+Not Found: /media/profile_pics/1_193644890025600144.jpg
+"GET /media/profile_pics/1_193644890025600144.jpg HTTP/1.1" 404 6995

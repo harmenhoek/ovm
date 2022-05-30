@@ -41,7 +41,12 @@ def plannertable(request, dayname):
 
     reference = toSeconds(daydate, datetime.time(0, 0))
 
-    posts = Post.objects.values('pk', 'post_fullname').filter(active=True).order_by('post_fullname')
+    from django.db.models import IntegerField
+    from django.db.models.functions import Cast
+    # posts = Post.objects.values('pk', 'post_fullname', 'postslug').filter(active=True).order_by('postslug')
+    posts = Post.objects.values('pk', 'post_fullname', 'postslug').filter(active=True).annotate(my_integer_field=Cast('postslug', IntegerField())).order_by('my_integer_field', 'postslug')
+
+
     html = TableHeaderFooter('thead', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "<tbody>"
 
@@ -52,26 +57,27 @@ def plannertable(request, dayname):
         # get data
         planning = Planning.objects.filter(removed=False, user=None, date=daydate, post__pk=post['pk']).values()
         occupation = Planning.objects.filter(removed=False, date=daydate, post__pk=post['pk']).exclude(user=None).values()
-        plan = []
-        # restructure
-        for p in planning:
-            plan.append({'id': p['id'], 'start': toSeconds(p['date'], p['starttime'], reference=reference), 'end': toSeconds(p['date'], p['endtime'], reference=reference)})
+        if occupation or planning:
+            plan = []
+            # restructure
+            for p in planning:
+                plan.append({'id': p['id'], 'start': toSeconds(p['date'], p['starttime'], reference=reference), 'end': toSeconds(p['date'], p['endtime'], reference=reference)})
 
-        occ = []
-        for o in occupation:
-            occ.append({'id': o['id'], 'start': toSeconds(o['date'], o['starttime'], reference=reference), 'end': toSeconds(o['date'], o['endtime'], reference=reference)})
+            occ = []
+            for o in occupation:
+                occ.append({'id': o['id'], 'start': toSeconds(o['date'], o['starttime'], reference=reference), 'end': toSeconds(o['date'], o['endtime'], reference=reference)})
 
 
-        planning, plannew, occnew = MakePlanning(occ[:], plan[:])  # pass copies  DO NOT DO ANYTHING WITH occnew, it is the non overlap only!
-        LUT = plannew + occ
-        occTable, plannewTable, finalTable = PlanningToArray(occ, plannew, time_start, time_end, resolution)
+            planning, plannew, occnew = MakePlanning(occ[:], plan[:])  # pass copies  DO NOT DO ANYTHING WITH occnew, it is the non overlap only!
+            LUT = plannew + occ
+            occTable, plannewTable, finalTable = PlanningToArray(occ, plannew, time_start, time_end, resolution)
 
-        import logging
-        logging.warning(f"0000000000 planning: {planning}")
-        logging.warning(f"0000000000 plannew: {plannew}")
-        logging.warning(f"0000000000 occnew: {occnew}")
+            import logging
+            logging.warning(f"0000000000 planning: {planning}")
+            logging.warning(f"0000000000 plannew: {plannew}")
+            logging.warning(f"0000000000 occnew: {occnew}")
 
-        html += ArrayToTable(finalTable, post['post_fullname'], post['pk'], LUT, dayname, next(row_colors))
+            html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
 
     html += TableHeaderFooter('tfoot', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "</tbody>"

@@ -354,9 +354,10 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
         html += f"<tr style='background-color:{rowcolor};'>"  #
 
         if idx == 0:
-            url = f"{reverse('occupation-add', args=str(postpk))}?dayname={dayname}"
+            # url = f"{reverse('occupation-add', args=str(postpk))}?dayname={dayname}"
 
-            html += f"<td rowspan='{len(planning)}' class='rowheader'><b>Post {postname} <a class='btn btn-info badge text-dark' hx-get='{url}' hx-target='#dialoghtmx' style='cursor:pointer; background-color: #337ab7; border-color: #337ab7;'><i class='fas fa-plus'></i></a></td>"
+            html += f"<td rowspan='{len(planning)}' class='rowheader'><b>Post {postname}</td>"
+            # html += f"<td rowspan='{len(planning)}' class='rowheader'><b>Post {postname} <a class='btn btn-info badge text-dark' hx-get='{url}' hx-target='#dialoghtmx' style='cursor:pointer; background-color: #337ab7; border-color: #337ab7;'><i class='fas fa-plus'></i></a></td>"
         else:
             html += "<td style='display:none;'></td>"  # fill with invisible cells (rowspan not supported by DataTables)
 
@@ -381,7 +382,8 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
                 url = reverse('planner-modify', args=(details.pk, start, end))
 
                 if not details.user:  # than planning
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant</i></td>"
+                    comment = f"({details.comment})" if details.comment else ""
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant {comment}</i></td>"
                 elif details.confirmed and not details.signed_off:
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name}</td>"  #{details.pk} | {start} - {end}
                 elif details.signed_off:

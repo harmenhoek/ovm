@@ -43,7 +43,7 @@
             <tr>
                 <th scope="row">Specialismen</th>
                 <td>
-                    {% for specialism in user.specialism.all %}
+                    {% for specialism in object.specialism.all %}
                         <span class="badge {{ specialism.colorcode }}">
                             {% if specialism.icon %}<i class="{{ specialism.icon }}"></i>{% endif %} {{ specialism }}
                         </span>

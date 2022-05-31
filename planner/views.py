@@ -52,6 +52,7 @@ def plannertable(request, dayname):
 
     from itertools import cycle
     row_colors = cycle(['#ffffff', '#ededed'])
+    # cnt = 0
 
     for post in posts:
         # get data
@@ -67,17 +68,30 @@ def plannertable(request, dayname):
             for o in occupation:
                 occ.append({'id': o['id'], 'start': toSeconds(o['date'], o['starttime'], reference=reference), 'end': toSeconds(o['date'], o['endtime'], reference=reference)})
 
+            import logging
+            logging.warning(f">>>>>>>>>>>>>>>>> occ:")
+            for temp in occ:
+                logging.warning(f"{temp}")
 
             planning, plannew, occnew = MakePlanning(occ[:], plan[:])  # pass copies  DO NOT DO ANYTHING WITH occnew, it is the non overlap only!
             LUT = plannew + occ
             occTable, plannewTable, finalTable = PlanningToArray(occ, plannew, time_start, time_end, resolution)
 
-            import logging
+
             logging.warning(f"0000000000 planning: {planning}")
             logging.warning(f"0000000000 plannew: {plannew}")
             logging.warning(f"0000000000 occnew: {occnew}")
 
+            logging.warning(f">>>>>>>>>>>>>>>>> finalTable:")
+            for temp in finalTable:
+                logging.warning(f"{temp}")
+
             html += ArrayToTable(finalTable, post['postslug'], post['pk'], LUT, dayname, next(row_colors))
+
+            # #TEMP
+            # cnt += 1
+            # if cnt == 1:
+            #     return render(request, 'planner/planner_list_table.html', {'html': html})
 
     html += TableHeaderFooter('tfoot', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "</tbody>"

@@ -78,9 +78,49 @@
 
                     </div>
                 </div>
-    {% empty %}
-    <i>Post is onbezet.</i>
                 {% endfor %}
+
+    {% for occ, occ_color in external_occupation %}
+        <div class="card mb-3 border-{{ occ_color.0 }}">
+                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">Externe verkeersregelaar
+
+                        <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Afmelden van post">
+                            <i class="fas fa-sign-out-alt" style="cursor: pointer" hx-get="{% url 'planning-signoff' occ.pk %}" hx-target="#dialoghtmx"></i>
+                         </div>
+
+
+
+                    </div> <!-- card-header -->
+
+                    <div class="card-body">
+
+                    <style>
+                        .image{
+                            position:relative;
+                            overflow:hidden;
+                            padding-bottom:100%;
+                        }
+                        .image img{
+                            position:absolute;
+                        }
+                    </style>
+
+                        <div class="row">
+
+                            <div class="col-12">
+                                <b>Externe verkeersregelaar</b><br>
+                                {{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }}
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+    {% endfor %}
+
+    {% if emptypost %}
+        <i>Post is onbezet.</i>
+    {% endif %}
 
     </div>
 

@@ -148,7 +148,7 @@ class PostMapView(LoginRequiredMixin, ListView):
         status_orange_2 = [{i['post']: 'warning'} for i in status_orange]
         status_blue_2 = [{i['post']: 'info'} for i in status_blue]
         status_green_2 = [{i['post']: 'success'} for i in status_green]
-        status_white_2 = [{i['post']: 'white'} for i in status_white]
+        status_white_2 = [{i['post']: 'success'} for i in status_white]
         context['status'] = {k: v for element in status_orange_2 + status_blue_2 + status_green_2 + status_white_2 for k, v in element.items()}
 
         context['status_green'] = status_green
@@ -199,9 +199,15 @@ class PostOccupationView(LoginRequiredMixin, ListView):
         # occ = occ_orange | occ_blue | occ_green
         occ_color = [("warning", "dark") for i in range(occ_orange.count())] + \
                     [("info", "dark") for i in range(occ_blue.count())] + \
-                    [("success", "white") for i in range(occ_green.count())] + \
-                    [("white", "dark") for i in range(occ_white.count())]
+                    [("success", "white") for i in range(occ_green.count())]
         context['current_occupation'] = zip(occ, occ_color)
+
+        occ_color_external = [("default", "dark") for i in range(occ_white.count())]
+        context['external_occupation'] = zip(list(chain(occ_white)), occ_color_external)
+
+        if not occ and not occ_white:
+            context['emptypost'] = True
+
 
         return context
 

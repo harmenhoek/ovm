@@ -196,28 +196,44 @@ def BestMergeRowArray(array1, row):
 def BestMergeArrays(array1, array2):
     # this function checks if 2 arrays can be merged, i.e. there is no overlap. It checks for the best fit (i.e. it
     # adds rows so that the longest has the least amount of zeros.
+    import logging
+    logging.warning(f"BestMergeArrays")
+    # array2_2 = []
     while True:
         counter = 0
         for row1 in array1:  # PLANNING
+            logging.warning(f"BestMergeArrays --> row1: {row1}")
             fits = []
             for row2 in array2:  # OCCUPATION
+                logging.warning(f"BestMergeArrays --> row2: {row2}")
+                logging.warning(f"sum(CountNotZero2D([row2, row1])) --> {sum(CountNotZero2D([row2, row1]))}")
+                logging.warning(f"CountNotZero1D(Sum(row2, row1))[0] --> {CountNotZero1D(Sum(row2, row1))[0]}")
                 if sum(CountNotZero2D([row2, row1])) == CountNotZero1D(Sum(row2, row1))[0]:
                     fits.append(CountNotZero1D(Sum(row2, row1))[0])
                 else:
                     fits.append(0)
+
             if fits:
-                import logging
                 logging.warning(f"BestMergeArrays --> fits: {fits}")
                 bestfit = np.argmax(fits)
                 logging.warning(f"BestMergeArrays --> fits[bestfit]: {fits[bestfit]}")
                 if fits[bestfit] > 0:
                     array2[bestfit] = Sum(row1, array2[bestfit])
+                    # array2_2.append(Sum(row1, array2[bestfit]))
                     array1.remove(row1)
                     counter += 1
                 else:
                     array2.append(row1)
-            else:
-                array2.append(row1)
+
+                logging.warning(f"end row2 iteration --> array1: {array1}")
+                logging.warning(f"end row2 iteration --> array2: {array2}")
+                    # array2_2.append(row1)
+            # else:
+            # if not array2:
+            #     array1.remove(row1)
+            #     array2.append(row1)
+
+                # array2.append(row1)
 
         if counter == 0:
             break
@@ -246,6 +262,8 @@ def PlanningToArray(occ, plannew, time_start, time_end, resolution=900):
         # find best fit for the row in existing table
         occTable = BestMergeRowArray(occTable, row)
 
+    import logging
+
 
     plannewTable = []
     logging.warning(f"plannew: {plannew}")
@@ -269,12 +287,15 @@ def PlanningToArray(occ, plannew, time_start, time_end, resolution=900):
 
     finalTable = occTable[:]
 
+
     logging.warning(f"plannewTable: {plannewTable}")
     logging.warning(f"finalTable: {finalTable}")
 
     # try to fit in now planning: find best fit, i.e. when the total number of gaps in the row is minimal
-    plannewTable, finalTable = BestMergeArrays(finalTable, plannewTable)
-
+    _, finalTable = BestMergeArrays(plannewTable[:], finalTable[:])
+    logging.warning(f"00000000>>>>>>>>>>>>>>>>> finalTable:")
+    for temp in finalTable:
+        logging.warning(f"{temp}")
 
     for row in finalTable:
         fits = []
@@ -293,6 +314,9 @@ def PlanningToArray(occ, plannew, time_start, time_end, resolution=900):
 
         else:
             finalTable.append(row)
+
+
+
 
     # finalTable2 = []
     # finalTable_Copy = finalTable[:]
@@ -350,6 +374,9 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
     html = ""
     import logging
     logging.warning(f">>>>>>>>>>>>>>>>> POST: {postname}")
+    logging.warning(f">>>>>>>>>>>>>>>>> planning:")
+    for temp in planning:
+        logging.warning(f"{temp}")
     for idx, row in enumerate(planning):
         html += f"<tr style='background-color:{rowcolor};'>"  #
 
@@ -368,6 +395,9 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
         ind = np.insert(ind, 0, 0)  # add first index
         spans = np.diff(ind)  # get the length of each of the changes (difference between each index)
         spans = np.append(spans, len(row)-sum(spans))  # add the length of the last value
+
+        logging.warning(f"ind: {ind}")
+        logging.warning(f"spans: {spans}")
         for idx in range(len(ind)):
             if row[ind[idx]] == 0:
                 html += "<td></td>" * spans[idx]
@@ -382,18 +412,20 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
                 url = reverse('planner-modify', args=(details.pk, start, end))
                 comment = f"({details.comment})" if details.comment else ""
 
+                logging.warning(f">>>>>>>>>>>>>>>>> I was here")
+
                 if not details.external and not details.user:  # than planning
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant {comment}</i></td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant {comment} {details.pk}</i></td>"
                 elif details.external:  # planning for external
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #333; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Extern {comment}</i></td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #c1c1c1; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Extern {comment} {details.pk}</i></td>"
                 elif details.confirmed and not details.signed_off:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment} {details.pk}</td>"  #{details.pk} | {start} - {end}
                 elif details.signed_off:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #587793; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #587793; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment} {details.pk}</td>"  #{details.pk} | {start} - {end}
                 elif details.starttime <= datetime.datetime.now().time() and details.date == datetime.datetime.now().date():  # needs confirmation
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #74a9d8; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #74a9d8; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment} {details.pk}</td>"  #{details.pk} | {start} - {end}
                 else:
-                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment} {details.pk}</td>"
                 for i in range(spans[idx]-1):  # fill with invisible cells (colspan not supported by DataTables)
                     html += "<td style='display:none;'></td>"
 

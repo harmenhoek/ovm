@@ -5,11 +5,11 @@
 <form hx-post="{{ request.path }}">
     {% csrf_token %}
     <div class="modal-header">
-        Bezetting bewerken
+        Bezetting bewerken <span class="text-white p-0 m-0">{{ plan_pk }}</span>
     </div>
     <div class="modal-body">
         {{ form|crispy }}
-        <span class="text-muted">id: {{ plan_pk }}</span>
+
     </div>
     <div class="modal-footer justify-content-between">
         <div>

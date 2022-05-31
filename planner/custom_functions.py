@@ -292,7 +292,10 @@ def PlanningToArray(occ, plannew, time_start, time_end, resolution=900):
     logging.warning(f"finalTable: {finalTable}")
 
     # try to fit in now planning: find best fit, i.e. when the total number of gaps in the row is minimal
-    _, finalTable = BestMergeArrays(plannewTable[:], finalTable[:])
+    # _, finalTable = BestMergeArrays(plannewTable[:], finalTable[:])
+
+    finalTable = finalTable + plannewTable
+
     logging.warning(f"00000000>>>>>>>>>>>>>>>>> finalTable:")
     for temp in finalTable:
         logging.warning(f"{temp}")

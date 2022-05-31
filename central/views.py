@@ -130,7 +130,7 @@ class PostMapView(LoginRequiredMixin, ListView):
                                                 endtime__lt=datetimenow)\
             .exclude(user=None).values('post').distinct()
 
-        # now + not confirmed (planning)
+        # now + not confirmed (planned)
         status_blue = Planning.objects.filter(removed=False, signed_off=False, confirmed=False, date=datenow,
                                               starttime__lt=datetimenow, endtime__gt=datetimenow). \
             exclude(post__pk__in=status_orange).exclude(user=None).values('post').distinct()
@@ -140,15 +140,21 @@ class PostMapView(LoginRequiredMixin, ListView):
                                                starttime__lt=datetimenow, endtime__gt=datetimenow).\
             exclude(post__pk__in=status_orange).exclude(post__pk__in=status_blue).exclude(user=None).values('post').distinct()
 
+        # now + external
+        status_white = Planning.objects.filter(removed=False, signed_off=False, user=None, external=True, starttime__lt=datetimenow,
+                                               endtime__gt=datetimenow, date=datenow).values('post').distinct()
+
 
         status_orange_2 = [{i['post']: 'warning'} for i in status_orange]
         status_blue_2 = [{i['post']: 'info'} for i in status_blue]
         status_green_2 = [{i['post']: 'success'} for i in status_green]
-        context['status'] = {k: v for element in status_orange_2 + status_blue_2 + status_green_2 for k, v in element.items()}
+        status_white_2 = [{i['post']: 'white'} for i in status_white]
+        context['status'] = {k: v for element in status_orange_2 + status_blue_2 + status_green_2 + status_white_2 for k, v in element.items()}
 
         context['status_green'] = status_green
         context['status_orange'] = status_orange
         context['status_blue'] = status_blue
+        context['status_white'] = status_white
 
         return context
 
@@ -185,13 +191,16 @@ class PostOccupationView(LoginRequiredMixin, ListView):
         occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
                                             confirmed=True, signed_off=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
                                            date=datenow).exclude(user=None)
+        occ_white = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False, signed_off=False, user=None, external=True,
+                                            starttime__lt=datetimenow, endtime__gt=datetimenow, date=datenow)
 
         from itertools import chain
         occ = list(chain(occ_orange, occ_blue, occ_green))
         # occ = occ_orange | occ_blue | occ_green
         occ_color = [("warning", "dark") for i in range(occ_orange.count())] + \
                     [("info", "dark") for i in range(occ_blue.count())] + \
-                    [("success", "white") for i in range(occ_green.count())]
+                    [("success", "white") for i in range(occ_green.count())] + \
+                    [("white", "dark") for i in range(occ_white.count())]
         context['current_occupation'] = zip(occ, occ_color)
 
         return context

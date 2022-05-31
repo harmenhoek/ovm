@@ -73,6 +73,7 @@ class Planning(models.Model):
     signed_off_time = models.DateTimeField(null=True, blank=True, verbose_name='Afmeldtijd')
     signed_off_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='signed_of_by')
     copy_of = models.IntegerField(null=True, blank=True)
+    external = models.BooleanField(default=False, verbose_name='Externe verkeersregelaar', help_text='Kan op meerdere posten staan en wordt automatisch bevestigd en afgemeld van post.')
     history = HistoricalRecords()
 
     def __str__(self):

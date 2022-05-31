@@ -382,13 +382,15 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
                 url = reverse('planner-modify', args=(details.pk, start, end))
                 comment = f"({details.comment})" if details.comment else ""
 
-                if not details.user:  # than planning
+                if not details.external and not details.user:  # than planning
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant {comment}</i></td>"
+                elif details.external:  # planning for external
+                    html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #333; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Extern {comment}</i></td>"
                 elif details.confirmed and not details.signed_off:
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #5cb85c; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
                 elif details.signed_off:
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #587793; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
-                elif details.starttime <= datetime.datetime.now().time():  # needs confirmation
+                elif details.starttime <= datetime.datetime.now().time() and details.date == datetime.datetime.now().date():  # needs confirmation
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #74a9d8; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"  #{details.pk} | {start} - {end}
                 else:
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow' style='background-color: #337ab7; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'>{details.user.first_name} {details.user.last_name} {comment}</td>"

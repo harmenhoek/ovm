@@ -49,7 +49,7 @@ class AddPlanningPlanner(forms.ModelForm):
     class Meta:
         model = Planning
         # post = forms.ModelChoiceField(queryset=Planning.objects.values('post').order_by('-post__post_fullname'))
-        fields = ['post', 'date', 'slider', 'starttime', 'endtime', 'comment']
+        fields = ['post', 'date', 'slider', 'starttime', 'endtime', 'comment', 'external']
 
 
         options = ShiftDay.objects.filter(active=True).order_by('date')
@@ -134,7 +134,7 @@ class AddOccupationPlanner(forms.ModelForm):
             raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
         plan = Planning.objects.filter(user=user, starttime__lt=endtime, endtime__gt=starttime, date=date,
-                                       removed=False)
+                                       removed=False, signed_off=False)
         if plan:
             raise ValidationError(
                 f'Overlap met bestaande planning. {plan[0].user} staat al ingepland op post {plan[0].post.postslug}.')

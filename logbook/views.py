@@ -36,8 +36,12 @@ def logbooktable(request, dayname=None):
 
     return render(request, 'logbook/log_list_table.html', {'logs': logs})
 
+
+
 @staff_member_required
 def logbook(request, dayname=None):
+    if request.device['is_mobile']:
+        dayname = "all"
     if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
         # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
         logs = Log.objects.filter(deleted=False)

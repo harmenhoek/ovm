@@ -9,15 +9,25 @@
         <div class="card mb-4">
             <h5 class="card-header">Logboek</h5>
             <div class="card-body">
-                <div class="btn-group">
-                    {% for day in alldays %}
-                        <a href="{% url 'logbook' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>
-                    {% endfor %}
-                </div>
-                <a href="{% url 'logbook' 'all' %}" class="btn btn-outline-secondary {% if currentday == 'all' %}active{% endif %}">Alles</a>
+                <div class="row">
+                    <div class="col col-1 col-md-8">
+                        <div class="d-none d-sm-block">
+                            <div class="btn-group">
+                                {% for day in alldays %}
+                                    <a href="{% url 'logbook' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>
+                                {% endfor %}
+                            </div>
+                            <a href="{% url 'logbook' 'all' %}" class="btn btn-outline-secondary {% if currentday == 'all' %}active{% endif %}">Alles</a>
 
-                <a href="{% url 'export-page' currentday %}" class="btn btn-secondary float-end" target="_blank"><i class="fas fa-download"></i> Exporteren</a>
-                <a hx-get="{% url 'log-add' %}" hx-target="#dialoghtmx" class="btn btn-success float-end mx-2"><i class="fas fa-plus"></i> Toevoegen</a>
+                        </div>
+                    </div>
+                    <div class="col col-11 col-md-4">
+                        <a href="{% url 'export-page' currentday %}" class="btn btn-secondary float-end d-none d-sm-block" target="_blank"><i class="fas fa-download"></i> Exporteren</a>
+                        <a hx-get="{% url 'log-add' %}" hx-target="#dialoghtmx" class="btn btn-success float-end mx-2"><i class="fas fa-plus"></i> Toevoegen</a>
+                    </div>
+                </div>
+
+
 
                 <div hx-get="{% url 'log-table' currentday %}" hx-trigger="load, every 60s, logsUpdated from:body" class="mt-4"></div>
             </div> <!-- card-body -->

@@ -21,6 +21,7 @@ from .forms import ModifyPlanningDashboard, AddPlanningDashboard, ImportData
 import json
 from datetime import date
 import csv
+from django.shortcuts import redirect
 
 @method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
@@ -87,6 +88,13 @@ class PostListView(LoginRequiredMixin, ListView):
     template_name = 'central/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-postslug']
+
+    def get(self, request, *args, **kwargs):
+        if request.device['is_mobile']:
+            return redirect("logbook")
+        else:
+            return super(PostListView, self).get(request, *args, **kwargs)
+
 
     def get_context_data(self, **kwargs): # get info of currently selected post
         context = super().get_context_data(**kwargs)

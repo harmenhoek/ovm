@@ -46,28 +46,58 @@
 
 <script>
     $(document).ready(function() {
-        $('#log_list').DataTable({
-            stateSave: true,
-            "order": [[ 0, "des" ]],
-            "pagingType": "full_numbers",
-            responsive: true,
-            responsive: {
-                details: true
-            },
-            "language": {
-                "lengthMenu": "Toon _MENU_ logs per pagina",
-                "zeroRecords": "Geen resulaten met huidige zoekterm.",
-                "infoFiltered": "(gefilterd van totaal _MAX_ logs)",
-                "info":           "Logs _START_ - _END_ (van de _TOTAL_)",
-                "infoEmpty": "Geen resultaten",
-                "search": "Zoeken:",
-                "paginate": {
-                    "first":      "Eerste",
-                    "last":       "Laatste",
-                    "next":       "Volgende",
-                    "previous":   "Vorige"
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            $('#log_list').DataTable({
+                stateSave: true,
+                "order": [[ 0, "des" ]],
+                "pagingType": "full_numbers",
+                responsive: true,
+                responsive: {
+                    details: true
                 },
-            },
-        });
+                "bLengthChange": false,
+                "language": {
+                    "lengthMenu": "Toon _MENU_ logs per pagina",
+                    "zeroRecords": "Geen resulaten met huidige zoekterm.",
+                    "infoFiltered": "(gefilterd van totaal _MAX_ logs)",
+                    "info":           "Logs _START_ - _END_ (van de _TOTAL_)",
+                    "infoEmpty": "Geen resultaten",
+                    "search": "Zoeken:",
+                    "paginate": {
+                        "first":      "Eerste",
+                        "last":       "Laatste",
+                        "next":       "Volgende",
+                        "previous":   "Vorige"
+                    },
+                },
+            });
+        } else {
+            $('#log_list').DataTable({
+                stateSave: true,
+                "order": [[ 0, "des" ]],
+                "pagingType": "full_numbers",
+                responsive: true,
+                responsive: {
+                    details: true
+                },
+                "language": {
+                    "lengthMenu": "Toon _MENU_ logs per pagina",
+                    "zeroRecords": "Geen resulaten met huidige zoekterm.",
+                    "infoFiltered": "(gefilterd van totaal _MAX_ logs)",
+                    "info":           "Logs _START_ - _END_ (van de _TOTAL_)",
+                    "infoEmpty": "Geen resultaten",
+                    "search": "Zoeken:",
+                    "paginate": {
+                        "first":      "Eerste",
+                        "last":       "Laatste",
+                        "next":       "Volgende",
+                        "previous":   "Vorige"
+                    },
+                },
+            });
+        }
+
+
+
     } );
 </script>

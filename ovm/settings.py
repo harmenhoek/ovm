@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'bootstrap_datepicker_plus',
     'simple_history',
+    'mobiledetect',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'simple_history.middleware.HistoryRequestMiddleware',
+    'mobiledetect.middleware.DetectMiddleware',
 ]
 
 ROOT_URLCONF = 'ovm.urls'

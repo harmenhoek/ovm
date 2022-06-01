@@ -38,9 +38,9 @@
                     <td colspan="2">
                         {% if object.file1 %}
                             {% if object.file1.url|checkifimage %}
-                                <img src="{{ object.file1.url }}" class="w-100"/>
+                                <img src="{{ object.file1.url }}" class="mw-100 rounded img-thumbnail"/>
                             {% else %}
-                                 <a href="{{ object.file1.url }}" target="_blank" class="badge bg-secondary">
+                                 <a href="{{ object.file1.url }}" target="_blank" class="badge bg-secondary text-break" style="white-space:normal !important; word-wrap: break-word;">
                                      <i class="fas fa-paperclip"></i>
                                      {{ object.file1.name }} ({{ object.file1.path|filesize|filesizeformat }})
                                      </a>
@@ -48,9 +48,9 @@
                         {% endif %}
                         {% if object.file2 %}
                             {% if object.file2.url|checkifimage %}
-                                <img src="{{ object.file2.url }}" class="w-100"/>
+                                <img src="{{ object.file2.url }}" class="mw-100 rounded img-thumbnail mt-2"/>
                             {% else %}
-                                 <a href="{{ object.file2.url }}" target="_blank" class="badge bg-secondary">
+                                 <a href="{{ object.file2.url }}" target="_blank" class="badge bg-secondary text-break" style="white-space:normal !important; word-wrap: break-word;">
                                      <i class="fas fa-paperclip"></i>
                                      {{ object.file2.name }} ({{ object.file2.path|filesize|filesizeformat }})
                                      </a>

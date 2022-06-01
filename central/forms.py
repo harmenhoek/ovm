@@ -99,7 +99,7 @@ class AddPlanningDashboard(forms.ModelForm):
         plan = Planning.objects.filter(user=user,
                                 starttime__lt=datetimenow,
                                 endtime__gt=datetimenow,
-                                date=datenow, removed=False, signed_off=False).exlude(external=True)
+                                date=datenow, removed=False, signed_off=False).exclude(external=True)
         if plan:
             # we specifically request [0], since there should only be 1 result! We cannot use .get since queryset might return empty
             raise ValidationError(f'{plan[0].user} staat momenteel al op post {plan[0].post.postslug}')

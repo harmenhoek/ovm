@@ -364,7 +364,7 @@ def TableHeaderFooter(headerfoot, time_start=0, time_end=86400, resolution=900, 
     header = ""
     for idx, i in enumerate(range(ArrayWidth)):  # get number of columns
         if i % colspan == 0:
-            time = datetime.datetime.fromtimestamp(resolution * idx + time_start).strftime("%H:%M")
+            time = datetime.datetime.fromtimestamp(resolution * idx + time_start - 3600).strftime("%H:%M")
             # header += f"<th>{idx} <br> {time} <br>{int(resolution * idx + time_start)}</th>"
             header += f"<th colspan='{colspan}' style='border-left:1px solid #8c8c8c;'>{time}</th>"
 

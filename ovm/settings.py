@@ -143,12 +143,11 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
 USE_TZ = True
-TIME_ZONE = 'WET'
+TIME_ZONE = 'Europe/Amsterdam'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

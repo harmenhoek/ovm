@@ -1,6 +1,19 @@
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
 <h2>Opwekking Verkeer Planner</h2>
 <h3>{{ currentday }}</h3>
         <p class="text-muted">Geëxporteerd door {{ request.user }} op {% load i18n %}{% language 'nl' %} {% now 'l d M H:i' %}{% endlanguage %}</p>
+
+
+{% load django_bootstrap5 %}
+    {% bootstrap_css %}
+
 <style>
     #planner_list td {
         vertical-align: middle;
@@ -19,7 +32,18 @@
 
 </style>
 
+<script>
+$(document).ready(function() {
+    window.print();
+});
+</script>
+
+<body>
+<div id="exportarea" style="width:1000px;">
+
 <table id="planner_list" class="table cell-border w-100">
 
 {{ html|safe }}
 </table>
+</div>
+</body>

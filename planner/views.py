@@ -30,12 +30,11 @@ def planner(request, dayname=None):
     return render(request, 'planner/planner_list.html', {'currentday': dayname, 'alldays': alldays, 'daydate': daydate, })
 
 @staff_member_required
-def plannertable(request, dayname):
+def plannertable(request, dayname, print=None):
     resolution = 15 * 60
     time_start = 7 * 60 * 60
     time_end = 24 * 60 * 60
     headercolspan = 4
-
 
     daydate = ShiftDay.objects.get(dayname__iexact=dayname).date
 
@@ -95,7 +94,8 @@ def plannertable(request, dayname):
 
     html += TableHeaderFooter('tfoot', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "</tbody>"
-
+    if print:
+        return render(request, 'planner/planner_print.html', {'html': html})
     return render(request, 'planner/planner_list_table.html', {'html': html})
 
 

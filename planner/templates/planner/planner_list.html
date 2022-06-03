@@ -60,12 +60,13 @@
 
 
     </div> <!-- col-12 -->
-             <div class="col-xl-12 col-12 ">
-                 <div class="float-end mb-2 px-2">
-            <a class="btn btn-info" style='background-color: #337ab7; border-color: #337ab7;' hx-get="{% url 'occupation-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a></a>
-            <a class="btn btn-warning" style='background-color: #da9b4e; border-color: #da9b4e;' hx-get="{% url 'planner-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a></a>
-        </div>
-             </div>
+     <div class="col-xl-12 col-12 ">
+         <div class="float-end mb-2 px-2">
+             <a class="btn btn-info" style='background-color: #337ab7; border-color: #337ab7;' hx-get="{% url 'occupation-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a>
+             <a class="btn btn-warning" style='background-color: #da9b4e; border-color: #da9b4e;' hx-get="{% url 'planner-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a>
+             <a  class="btn btn-secondary" href="{% url 'planner-print' currentday 'print' %}" target="_blank"><i class="fas fa-download"></i> Exporteren</a>
+         </div>
+     </div>
     <div class="col-12 overflow-auto">
 
     <style>

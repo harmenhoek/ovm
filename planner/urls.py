@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.planner, name='planner'),
+    path('day/<slug:dayname>/<slug:print>/', views.plannertable, name='planner-print'),
     path('day/<slug:dayname>/', views.planner, name='planner'),
     path('planner_table/day/<slug:dayname>/', views.plannertable, name='planner-table'),
     path('modify/<int:pk>', views.planner_modify, name='planner-modify'),

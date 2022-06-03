@@ -12,6 +12,8 @@
 
 
 {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+
 
 <style>
     body {
@@ -33,7 +35,7 @@
     }
 
     table, td {
-        border: 1px solid #888;
+        border: 3px solid #888;
         border-collapse:collapse;
     }
 
@@ -41,7 +43,7 @@
 
 <script>
 $(document).ready(function() {
-    // window.print();
+    window.print();
 });
 </script>
 

@@ -14,10 +14,10 @@
                         <div class="d-none d-sm-block">
                             <div class="btn-group">
                                 {% for day in alldays %}
-                                    <a href="{% url 'logbook' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>
+<!--                                    <a href="{% url 'logbook' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>-->
                                 {% endfor %}
                             </div>
-                            <a href="{% url 'logbook' 'all' %}" class="btn btn-outline-secondary {% if currentday == 'all' %}active{% endif %}">Alles</a>
+<!--                            <a href="{% url 'logbook' 'all' %}" class="btn btn-outline-secondary {% if currentday == 'all' %}active{% endif %}">Alles</a>-->
 
                         </div>
                     </div>

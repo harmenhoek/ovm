@@ -31,7 +31,7 @@ def logbooktable(request, dayname=None):
     elif dayname == "all":
         logs = Log.objects.filter(deleted=False).order_by('-added_on')
     else:
-        daydate = ShiftDay.objects.filter(active=True, dayname=dayname)[0].date
+        daydate = ShiftDay.objects.filter(active=True, dayname__iexact=dayname)[0].date
         logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
 
     return render(request, 'logbook/log_list_table.html', {'logs': logs})
@@ -40,21 +40,23 @@ def logbooktable(request, dayname=None):
 
 @staff_member_required
 def logbook(request, dayname=None):
-    if request.device['is_mobile']:
-        dayname = "all"
-    if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
-        # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
-        logs = Log.objects.filter(deleted=False)
-        dayname = 'all'
-    elif ShiftDay.objects.filter(active=True, date=date.today()):
-        # no day is passed (condition automatically agreed) and current date is one of ShiftDays
-        daydate = ShiftDay.objects.get(active=True, date=date.today()).date
-        dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
-        logs = Log.objects.filter(deleted=False, added_on=daydate)
-    else:
-        # exact day is passed
-        daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
-        logs = Log.objects.filter(deleted=False, added_on=daydate)
+    dayname = "all"
+    # if request.device['is_mobile']:
+    #     dayname = "all"
+    # if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
+    #     # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
+    #     logs = Log.objects.filter(deleted=False)
+    #     dayname = 'all'
+    # elif ShiftDay.objects.filter(active=True, date=date.today()):
+    #     # no day is passed (condition automatically agreed) and current date is one of ShiftDays
+    #     daydate = ShiftDay.objects.get(active=True, date=date.today()).date
+    #     dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
+    #     logs = Log.objects.filter(deleted=False, added_on=daydate)
+    # else:
+    #     # exact day is passed
+    #     daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
+    #     logs = Log.objects.filter(deleted=False, added_on=daydate)
+    logs = Log.objects.filter(deleted=False)
 
     alldays = ShiftDay.objects.filter(active=True)
     return render(request, 'logbook/log_list.html', {'logs': logs, 'alldays': alldays, 'currentday': dayname, })

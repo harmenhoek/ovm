@@ -27,12 +27,12 @@ def logbooktable(request, dayname=None):
         else:
             daydate = ShiftDay.objects.filter(active=True)[0].date
             dayname = ShiftDay.objects.filter(active=True)[0].dayname
-        logs = Log.objects.filter(deleted=False, added_on=daydate)
+        logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
     elif dayname == "all":
-        logs = Log.objects.filter(deleted=False)
+        logs = Log.objects.filter(deleted=False).order_by('-added_on')
     else:
-        daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
-        logs = Log.objects.filter(deleted=False, added_on=daydate)
+        daydate = ShiftDay.objects.filter(active=True, dayname=dayname)[0].date
+        logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
 
     return render(request, 'logbook/log_list_table.html', {'logs': logs})
 

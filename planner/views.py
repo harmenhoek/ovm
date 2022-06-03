@@ -95,7 +95,7 @@ def plannertable(request, dayname, print=None):
     html += TableHeaderFooter('tfoot', time_start=time_start, time_end=time_end, resolution=resolution, colspan=headercolspan)
     html += "</tbody>"
     if print:
-        return render(request, 'planner/planner_print.html', {'html': html})
+        return render(request, 'planner/planner_print.html', {'html': html, 'dayname': dayname})
     return render(request, 'planner/planner_list_table.html', {'html': html})
 
 

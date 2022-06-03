@@ -7,13 +7,16 @@
 
 
 <h2>Opwekking Verkeer Planner</h2>
-<h3>{{ currentday }}</h3>
+<h3>{{ dayname }}</h3>
         <p class="text-muted">Geëxporteerd door {{ request.user }} op {% load i18n %}{% language 'nl' %} {% now 'l d M H:i' %}{% endlanguage %}</p>
 
 
 {% load django_bootstrap5 %}
 
 <style>
+    body {
+        filter:brightness(130%);
+    }
     #planner_list td {
         vertical-align: middle;
     }
@@ -29,11 +32,16 @@
     white-space: nowrap;
     }
 
+    table, td {
+        border: 1px solid #888;
+        border-collapse:collapse;
+    }
+
 </style>
 
 <script>
 $(document).ready(function() {
-    window.print();
+    // window.print();
 });
 </script>
 

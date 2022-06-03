@@ -29,7 +29,7 @@ class UsersView(LoginRequiredMixin, ListView):
     template_name = 'central/user_list.html'
 
     def get_queryset(self):
-        return get_user_model().objects.filter(is_superuser=False, is_active=True)
+        return get_user_model().objects.filter(is_superuser=False)
 
 @method_decorator(staff_member_required, name='dispatch')
 class UserDetailView(LoginRequiredMixin, DetailView):

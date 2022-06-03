@@ -12,7 +12,7 @@
 
 {% for occ, occ_color in current_occupation %}
                 <div class="card mb-3 border-{{ occ_color.0 }}">
-                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">{{ occ.user.first_name }} {{ occ.user.last_name }}
+                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">{{ occ.user.first_name }} {{ occ.user.last_name }} {% if occ.porto %}<i class="fas fa-phone-volume" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een porto"></i>{% endif %} {% if occ.bike %}<i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een leenfiets"></i>{% endif %}
 
                         {% if occ.confirmed %}
                             <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Afmelden van post">
@@ -68,10 +68,11 @@
                                     {{ occ.user.phonenumber|nonetounknown|safe }}<br>
                                 {% endif %}
                                 {% if occ.user.description %}
-                                <div class="text-muted small" style="margin-left:1em; margin-right:0.5em;">{{ occ.user.description|linebreaks }}</div>
+                                    <div class="text-muted small" style="margin-left:1em; margin-right:0.5em;">{{ occ.user.description|linebreaks }}</div>
                                 {% endif %}
                                 <hr class="my-1">
-                                {{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }}
+                                <p>{{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }}</p>
+                                {% if occ.bike %}<p><i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een leenfiets"></i> {{ occ.bike }}</p>{% endif %}
                             </div>
                         </div>
 

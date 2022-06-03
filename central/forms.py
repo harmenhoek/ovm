@@ -20,7 +20,7 @@ class ImportData(forms.Form):
 class ModifyPlanningDashboard(forms.ModelForm):
     class Meta:
         model = Planning
-        fields = ['user', 'post', 'endtime', 'comment']
+        fields = ['user', 'post', 'endtime', 'comment', 'porto', 'bike']
         widgets = {
             'endtime': TimePickerInput(),
         }
@@ -83,7 +83,7 @@ class AddPlanningDashboard(forms.ModelForm):
 
     class Meta:
         model = Planning
-        fields = ['user', 'post', 'slider', 'starttime', 'endtime', 'comment', 'confirmed']
+        fields = ['user', 'post', 'slider', 'starttime', 'endtime', 'comment', 'porto', 'bike', 'confirmed']
         widgets = {
             'endtime': TimePickerInput(),
         }

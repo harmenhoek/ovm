@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 class ModifyPlanningPlanner(forms.ModelForm):
     class Meta:
         model = Planning
-        fields = ['user', 'post', 'date', 'starttime', 'endtime', 'comment']
+        fields = ['user', 'post', 'date', 'starttime', 'endtime', 'comment', 'porto', 'bike']
         widgets = {
             'starttime': TimePickerInput(),
             'endtime': TimePickerInput(),
@@ -112,7 +112,7 @@ class AddOccupationPlanner(forms.ModelForm):
 
     class Meta:
         model = Planning
-        fields = ['user', 'post', 'date', 'slider', 'starttime', 'endtime', 'comment']
+        fields = ['user', 'post', 'date', 'slider', 'starttime', 'endtime', 'comment', 'porto', 'bike']
 
         options = ShiftDay.objects.filter(active=True)
         CHOICES = ((x.date, x.dayname) for x in options)

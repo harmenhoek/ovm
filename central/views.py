@@ -143,7 +143,7 @@ class PostMapView(LoginRequiredMixin, ListView):
                                               starttime__lt=datetimenow, endtime__gt=datetimenow). \
             exclude(post__pk__in=status_orange).exclude(user=None).values('post').distinct()
 
-        # now + confirmed
+        # now + confirmed                details = Planning.objects.get(pk=info['id'])
         status_green = Planning.objects.filter(removed=False, signed_off=False, confirmed=True, date=datenow,
                                                starttime__lt=datetimenow, endtime__gt=datetimenow).\
             exclude(post__pk__in=status_orange).exclude(post__pk__in=status_blue).exclude(user=None).values('post').distinct()

@@ -14,6 +14,17 @@ class Flag(models.Model):
     def __str__(self):
         return self.flag
 
+
+class Sector(models.Model):
+    name = models.CharField(max_length=100)
+    shortcut = models.CharField(max_length=20)
+    description = models.TextField(null=True, blank=True)
+    icon = models.CharField(max_length=100, default='bug',
+                            help_text='Set a icon from <a target="_blank" href="https://fontawesome.com/icons?m=free">this library</a>.')
+    history = HistoricalRecords()
+    def __str__(self):
+        return self.name
+
 class Post(models.Model):
     post_fullname = models.CharField(max_length=100, null=True, blank=True)
     postslug = models.SlugField(max_length=5, null=True, blank=True, unique=True)
@@ -26,6 +37,7 @@ class Post(models.Model):
     active = models.BooleanField(default=True)
     flag = models.ForeignKey(Flag, on_delete=models.SET_NULL, null=True, blank=True)
     flag_comment = models.CharField(max_length=100, null=True, blank=True)
+    sector = models.ForeignKey(Sector, on_delete=models.SET_NULL, null=True, blank=True)
     history = HistoricalRecords()
 
 

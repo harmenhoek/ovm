@@ -22,6 +22,7 @@
             <h5 class="card-header">Planner</h5>
             <div class="card-body">
                 <div class="btn-group">
+
             {% for day in alldays %}
                 <a href="{% url 'planner' day.dayname %}" class="btn btn-outline-secondary {% if currentday == day.dayname %}active{% endif %}">{{ day.dayname }}</a>
             {% endfor %}
@@ -65,6 +66,14 @@
              <a class="btn btn-info" style='background-color: #337ab7; border-color: #337ab7;' hx-get="{% url 'occupation-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Toevoegen</a>
              <a class="btn btn-warning" style='background-color: #da9b4e; border-color: #da9b4e;' hx-get="{% url 'planner-add' %}?dayname={{ currentday }}" hx-target="#dialoghtmx"><i class="fas fa-plus"></i> Lege planning</a>
              <a  class="btn btn-secondary" href="{% url 'planner-print' currentday 'print' %}" target="_blank"><i class="fas fa-download"></i> Exporteren</a>
+             <a  class="btn btn-secondary" hx-get="{% url 'planner-shiftchange' nextshift_dayname nextshift_timename %}" hx-target="#dialoghtmx"><i class="fas fa-exchange-alt"></i> Shift wissel</a>
+{#             <div class="dropdown float-end px-1">#}
+{#                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-exchange-alt"></i> Shift wissel</a>#}
+{#                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">#}
+{#                    <li><a class="dropdown-item" target="_blank" href="{% url 'planner-shiftchange'%}"> Centrale Post</a></li>#}
+{#                    <li><a class="dropdown-item" target="_blank" href="#"> Teamleiders veld</a></li>#}
+{#                </ul>#}
+{#            </div>#}
          </div>
      </div>
     <div class="col-12 overflow-auto">

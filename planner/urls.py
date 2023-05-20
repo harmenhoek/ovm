@@ -12,4 +12,6 @@ urlpatterns = [
     path('add/occupation/<int:pk>/', views.add_occupation, name='occupation-add'),
     path('add/planning', views.add_planning, name='planner-add'),
     path('add/planning/<int:pk>/', views.add_planning, name='planner-add'),
+    path('shiftchange/', views.shift_change, name='planner-shiftchange'),
+    path('shiftchange/<slug:dayname>/<slug:timename>/', views.shift_change, name='planner-shiftchange'),
  ]

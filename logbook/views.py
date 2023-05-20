@@ -17,22 +17,38 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 # from xhtml2pdf import pisa
 
+import logging
+
+
+from django.utils import timezone
+import datetime
+
+
+def get_logs(dayname):
+    if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
+        # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
+        logs = Log.objects.filter(deleted=False)
+        dayname = 'all'
+    elif dayname is not None:
+        # exact day is passed
+        daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
+        logs = Log.objects.filter(deleted=False, added_on__date=daydate)
+    elif ShiftDay.objects.filter(active=True, date=date.today()):
+        # no day is passed (condition automatically agreed) and current date is one of ShiftDays
+        daydate = ShiftDay.objects.get(active=True, date=date.today()).date
+        dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
+        logs = Log.objects.filter(deleted=False, added_on=daydate)
+    else:
+        # dayname is none and today is not in days, get first day
+        daydate = ShiftDay.objects.filter(active=True, dayname__iexact=dayname)[0].date
+        logs = Log.objects.filter(deleted=False, added_on__date=daydate).order_by('-added_on')
+
+    return logs, dayname
+
 @staff_member_required
 def logbooktable(request, dayname=None):
-    if dayname is None:
-        # see if current date is in list
-        if ShiftDay.objects.filter(active=True, date=date.today()):
-            daydate = ShiftDay.objects.get(active=True, date=date.today()).date
-            dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
-        else:
-            daydate = ShiftDay.objects.filter(active=True)[0].date
-            dayname = ShiftDay.objects.filter(active=True)[0].dayname
-        logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
-    elif dayname == "all":
-        logs = Log.objects.filter(deleted=False).order_by('-added_on')
-    else:
-        daydate = ShiftDay.objects.filter(active=True, dayname__iexact=dayname)[0].date
-        logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
+    logging.warning(f"BBB {dayname=}")
+    logs, dayname = get_logs(dayname)
 
     return render(request, 'logbook/log_list_table.html', {'logs': logs})
 
@@ -40,26 +56,21 @@ def logbooktable(request, dayname=None):
 
 @staff_member_required
 def logbook(request, dayname=None):
-    dayname = "all"
-    # if request.device['is_mobile']:
-    #     dayname = "all"
-    # if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
-    #     # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
-    #     logs = Log.objects.filter(deleted=False)
-    #     dayname = 'all'
-    # elif ShiftDay.objects.filter(active=True, date=date.today()):
-    #     # no day is passed (condition automatically agreed) and current date is one of ShiftDays
-    #     daydate = ShiftDay.objects.get(active=True, date=date.today()).date
-    #     dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
-    #     logs = Log.objects.filter(deleted=False, added_on=daydate)
-    # else:
-    #     # exact day is passed
-    #     daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
-    #     logs = Log.objects.filter(deleted=False, added_on=daydate)
-    logs = Log.objects.filter(deleted=False)
+    # dayname = "all"
+    logging.warning(f"AAA {dayname=}")
+
+    if request.device['is_mobile']:
+        dayname = "all"
+
+    logs, dayname = get_logs(dayname)
+
+    # logs = Log.objects.filter(deleted=False)
+    logging.warning(f"AAA2 {dayname=}")
 
     alldays = ShiftDay.objects.filter(active=True)
     return render(request, 'logbook/log_list.html', {'logs': logs, 'alldays': alldays, 'currentday': dayname, })
+
+
 
 # # defining the function to convert an HTML file to a PDF file
 # def html_to_pdf(template_src, context_dict={}):

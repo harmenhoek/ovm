@@ -1,0 +1,171 @@
+{% load static %}
+
+<link crossorigin="anonymous" href="{% static 'central/bootstrap.min.css' %}" rel="stylesheet">
+ <!--    Bootstrap icons -->
+    <link rel="stylesheet" href="{% static 'central/bootstrap-icons.css' %}">
+
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="{% static 'central/fontawesome_f40414c26a.js' %}" crossorigin="anonymous"></script>
+
+{% load django_bootstrap5 %}
+
+<style>
+    body {
+        filter:brightness(130%);
+    }
+    #planner_list td {
+        vertical-align: middle;
+    }
+    td.cutoverflow {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 20px;
+    }
+
+    td.rowheader {
+        width: 1%;
+    white-space: nowrap;
+    }
+
+    table, td {
+        border: 3px solid #888;
+        border-collapse:collapse;
+    }
+
+</style>
+
+<script>
+$(document).ready(function() {
+    {#window.print();#}
+});
+</script>
+
+
+
+
+
+<div class="modal-header">
+    <h5 class="modal-title">Opwekking Verkeer shiftwissel</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <h3>{{ dayname }} shift {{ timename }}</h3>
+    <p class="text-muted">Geëxporteerd door {{ request.user }} op {% load i18n %}{% language 'nl' %} {% now 'l d M H:i:s' %}{% endlanguage %}</p>
+
+   <div class="input-group mb-3 w-100">
+        <textarea class="form-control" id="myInput" rows="15" readonly>
+Shift wissel {{ dayname|lower }} shift {{ timename }} ({{ timestart|date:"H:i" }}-{{ timeend|date:"H:i" }})
+  Shifts die beginnen / eindigen tussen {{ timestart_search|date:"H:i" }} en {{ timeend_search|date:"H:i" }}
+  Geëxporteerd door {{ request.user }}op{% load i18n %}{% language 'nl' %} {% now 'l d M H:i:s' %}{% endlanguage %}
+  {{ occupation_new_count }} nieuw (+) | {{ occupation_cancel_count }} afmelden (x) | {{ occupation_change_count }} wisselen (< >)
+
+{% for sector, post_dict in occupation_total_grouped.items %} -------- {{ sector }}  --------
+{% for post, results in post_dict.items %} || {{ post }} ||
+{% for plan in results %}    {% if plan.shift_type == 'new' %}  + {% elif plan.shift_type == 'change' %}  < {% elif plan.shift_type == 'changerev' %}  > {% elif plan.shift_type == 'cancel' %} x {% endif %} {{ plan.post }} - {{ plan.user.first_name }} {{ plan.user.last_name }} {% if not plan.confirmed and plan.shift_type != 'new' %}(nooit bevestigd op post) {% endif %}({{ plan.starttime|time:"H:i" }} - {{ plan.endtime|time:"H:i" }}) {% if plan.comment %}- {{ plan.comment }}{% endif %}{% if plan.post_id_old %}(komt van {{ plan.post_id_old }}) {% endif %}{% if plan.post_id_new %}(gaat naar {{ plan.post_id_new }}){% endif %}{% if plan.later_today %}(later shift vandaag om {{ plan.later_today|time:"H:i" }}) {% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+        </textarea>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" type="button" onclick="copyToClipboard()" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard">
+            <span id="myTooltip"><i class="fas fa-copy"></i> Kopiëren</span>
+        </button>
+        <button class="btn btn-primary mx-1" id="printButton"><i class="fas fa-print"></i> Printen</button>
+    </div>
+    <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Sluiten</button>
+</div>
+
+
+
+
+{#<div id="exportarea" style="width:1000px;">#}
+
+{#    <table id="planner_list" class="table cell-border w-100">#}
+{#        <h1>Shift wissels</h1><br>#}
+{#    #}
+{#    dayname = {{ dayname }}<br>#}
+{#    date = {{ date|date:"Y-m-d" }}<br>#}
+{#    <br>#}
+{#    timestart = {{ timestart|time:"H:i" }}<br>#}
+{#    timestart_search = {{ timestart_search|date:"Y-m-d H:i:s" }}<br>#}
+{#    <br>#}
+{#    timeend = {{ timeend|time:"H:i" }}<br>#}
+{#    timeend_search = {{ timeend_search|date:"Y-m-d H:i:s" }}<br>#}
+{#    #}
+{#    #}
+{#    <h2>Search for shift changes on {{ dayname }} from {{ timestart_search }} till {{ timeend_search }}</h2>#}
+{#    #}
+    {#    MAKE 2 versions: one for CP and one for the groupsapp!#}
+{#        {% for sector, post_dict in occupation_total_grouped.items %}#}
+{#        <h2>-------- {{ sector }}  --------</h2>#}
+{#        {% for post, results in post_dict.items %}#}
+{#            <h3>{{ post }}</h3>#}
+{#            <ul>#}
+{#                {% for plan in results %}#}
+{#                    <b>#}
+{#                        {% if plan.shift_type == 'new' %}<i class="fas fa-plus"></i>#}
+{#                        {% elif plan.shift_type == 'change' %}<i class="fas fa-arrow-left"></i>#}
+{#                        {% elif plan.shift_type == 'changerev' %}<i class="fas fa-arrow-right"></i>#}
+{#                        {% elif plan.shift_type == 'cancel' %}<i class="fas fa-times"></i>#}
+{#                        {% endif %}#}
+{#                    </b>#}
+{#                    {{ plan.post }} - {{ plan.user.first_name }} {{ plan.user.last_name }}#}
+{#                    {% if not plan.confirmed %}#}
+{#                        (nooit bevestigd op post)#}
+{#                    {% endif %}#}
+{#                    <br>  ({{ plan.starttime|time:"H:i" }} - {{ plan.endtime|time:"H:i" }})#}
+{#                    {% if plan.comment %}#}
+{#                        - {{ plan.comment }}#}
+{#                    {% endif %}#}
+{#                    {% if plan.post_id_old %}#}
+{#                        (komt van {{ plan.post_id_old }})#}
+{#                    {% endif %}#}
+{#                    {% if plan.post_id_new %}#}
+{#                        (gaat naar {{ plan.post_id_new }})#}
+{#                    {% endif %}#}
+{#                    {% if plan.later_today %}#}
+{#                        (later shift vandaag om {{ plan.later_today|time:"H:i" }})#}
+{#                    {% endif %}#}
+{#                    <br>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        {% endfor %}#}
+{#    {% endfor %}#}
+{#    #}
+{#    </table>#}
+{#</div>#}
+
+<script crossorigin="anonymous" src="{% static 'central/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+  $(document).ready(function() {
+    $("#printButton").click(function() {
+      var content = $("#myInput").val();
+      var newWindow = window.open('', '', 'height=500,width=500');
+      newWindow.document.write('<html><head><title>ShiftWissel_{{ dayname|lower }}{{ timename }}__{% now 'YdmHis' %}</title>');
+      newWindow.document.write('</head><body>');
+      newWindow.document.write('<pre>' + content + '</pre>');
+      newWindow.document.write('</body></html>');
+      newWindow.print();
+      newWindow.close();
+    });
+  });
+</script>
+
+
+<script>
+    function copyToClipboard() {
+      var copyText = document.getElementById("myInput");
+      copyText.select();
+      document.execCommand("copy");
+      var tooltip = document.getElementById("myTooltip");
+      tooltip.innerHTML = "Gekopieërd!";
+    }
+</script>
+

@@ -27,7 +27,6 @@
     <script src="{% static 'central/jquery-3.3.1.slim.min.js' %}"
         crossorigin="anonymous"></script>
 
-
     <title>OVM</title>
 
 
@@ -152,7 +151,13 @@
     </div>
 </div>
 
-
+<div id="modalhtmx_lg" class="modal fade" tabindex="-1">
+    <div  class="modal-dialog modal-lg" >
+        <div id="dialoghtmx_lg" class="modal-content" hx-target="this">
+            Injection happens here.
+        </div>
+    </div>
+</div>
 
 
 
@@ -183,16 +188,6 @@
 
 
 
-<script>
-    $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
-
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
-</script>
 
 
 {% block tablescript %}{% endblock tablescript %}
@@ -227,6 +222,18 @@ $( document ).ready(function() {
 
 </script>
 
+
+<script>
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
+</script>
 
 
 

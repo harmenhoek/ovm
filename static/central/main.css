@@ -1,0 +1,16 @@
+
+
+/* Align menu bar center on wide devices */
+@media (min-width: 768px) {
+    .navbar-nav {
+        float:none;
+        margin:0 auto;
+        display: block;
+        text-align: center;
+    }
+
+    .navbar-nav > li {
+        display: inline-block;
+        float:none;
+    }
+}

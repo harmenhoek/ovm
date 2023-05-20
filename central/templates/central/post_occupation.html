@@ -1,4 +1,8 @@
 {% load static %}
+{% load humanize %}
+
+<script src="{% static "central/load_tooltips.js" %}" crossorigin="anonymous"></script>
+
 
 <h5 class="card-header">Bezetting post {{ current_post.postslug }}
     <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Toevoegen aan post">
@@ -11,7 +15,7 @@
 
 {% for occ, occ_color in current_occupation %}
                 <div class="card mb-3 border-{{ occ_color.0 }}">
-                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}">{{ occ.user.first_name }} {{ occ.user.last_name }} {% if occ.porto %}<i class="fas fa-phone-volume" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een porto"></i>{% endif %} {% if occ.bike %}<i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een leenfiets"></i>{% endif %}
+                    <div class="card-header h6 bg-{{ occ_color.0 }} text-{{ occ_color.1 }}"><b>{{ occ.user.first_name }} {{ occ.user.last_name }}</b> {% if occ.porto %} &nbsp;<i class="fas fa-phone-volume" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een porto"></i>{% endif %} {% if occ.bike %}  &nbsp;<i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een leenfiets"></i>{% endif %}
 
                         {% if occ.confirmed %}
                             <div class="float-end"  data-bs-toggle="tooltip" data-bs-placement="top" title="Afmelden van post">
@@ -35,19 +39,18 @@
                     </div> <!-- card-header -->
 
                     <div class="card-body">
+                        <style>
+                            .image{
+                                position:relative;
+                                overflow:hidden;
+                                padding-bottom:100%;
+                            }
+                            .image img{
+                                position:absolute;
+                            }
+                        </style>
 
-                    <style>
-                        .image{
-                            position:relative;
-                            overflow:hidden;
-                            padding-bottom:100%;
-                        }
-                        .image img{
-                            position:absolute;
-                        }
-                    </style>
-
-                        <div class="row">
+                        <div class="row pb-2">
                             <div class="col-4">
                                 <div class="img-thumbnail">
                                     <div class="image">
@@ -70,14 +73,25 @@
                                     <div class="text-muted small" style="margin-left:1em; margin-right:0.5em;">{{ occ.user.description|linebreaks }}</div>
                                 {% endif %}
                                 <hr class="my-1">
-                                <p>{{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }}</p>
-                                {% if occ.bike %}<p><i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="top" title="Heeft een leenfiets"></i> {{ occ.bike }}</p>{% endif %}
-                            </div>
-                        </div>
+                                <p class="mb-1">{{ occ.starttime|date:"G:i" }} - {{ occ.endtime|date:"G:i" }} </p>
+                                {% if occ.comment %}<p class="small m-0"><i class="far fa-sticky-note" data-bs-toggle="tooltip" data-bs-placement="right" title="Planningsnotities"></i> {{ occ.comment }} <br></p>{% endif %}
+                                {% if occ.bike %}<p class="small m-0"><i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="right" title="Leenfiets nummer"></i> {{ occ.bike }}</p>{% endif %}
 
 
-                    </div>
-                </div>
+                            </div> <!-- col -->
+                        </div> <!-- row -->
+                    {% if occ.confirmed %}
+                        <div class="row small text-muted">
+                            <div class="col-12">
+                                <small>Bevestigd door {{ occ.confirmed_by }} om {{ occ.starttime|date:"G:i" }}</small>
+                            </div> <!-- col -->
+                        </div> <!-- row -->
+                    {% endif %}
+
+                    </div> <!-- card body -->
+
+
+                </div> <!-- card -->
                 {% endfor %}
 
     {% for occ, occ_color in external_occupation %}

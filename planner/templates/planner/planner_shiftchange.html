@@ -53,7 +53,11 @@ $(document).ready(function() {
 </div>
 <div class="modal-body">
     <h3>{{ dayname }} shift {{ timename }}</h3>
-    <p class="text-muted">Geëxporteerd door {{ request.user }} op {% load i18n %}{% language 'nl' %} {% now 'l d M H:i:s' %}{% endlanguage %}</p>
+    <p class="text-muted">
+        <div class="alert alert-danger" role="alert">
+            <b>Let op:</b> Deze functionaliteit is nieuw en kan fouten bevatten!
+        </div>
+    </p>
 
    <div class="input-group mb-3 w-100">
         <textarea class="form-control" id="myInput" rows="15" readonly>
@@ -73,10 +77,13 @@ Shift wissel {{ dayname|lower }} shift {{ timename }} ({{ timestart|date:"H:i" }
 </div>
 <div class="modal-footer">
     <div class="d-flex justify-content-end">
-        <button class="btn btn-primary" type="button" onclick="copyToClipboard()" data-toggle="tooltip" data-placement="bottom" title="Copy to clipboard">
+        <button class="btn btn-primary" type="button" onclick="copyToClipboard()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Kopieer naar clipboard">
             <span id="myTooltip"><i class="fas fa-copy"></i> Kopiëren</span>
         </button>
-        <button class="btn btn-primary mx-1" id="printButton"><i class="fas fa-print"></i> Printen</button>
+
+        <button class="btn btn-primary mx-1" id="printButton" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Opslaan als PDF">
+            <i class="fas fa-print"></i> Printen
+        </button>
     </div>
     <button type="button" class="btn btn-secondary ms-auto" data-bs-dismiss="modal">Sluiten</button>
 </div>
@@ -164,8 +171,9 @@ Shift wissel {{ dayname|lower }} shift {{ timename }} ({{ timestart|date:"H:i" }
       var copyText = document.getElementById("myInput");
       copyText.select();
       document.execCommand("copy");
-      var tooltip = document.getElementById("myTooltip");
-      tooltip.innerHTML = "Gekopieërd!";
+      var tooltip2 = document.getElementById("myTooltip");
+      tooltip2.innerHTML = "Gekopieërd!";
     }
 </script>
 
+<script src="{% static "central/load_tooltips.js" %}" crossorigin="anonymous"></script>

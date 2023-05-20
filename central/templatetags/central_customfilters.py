@@ -73,3 +73,9 @@ def FancyTrueFalse(value):
         return "<i class='fas fa-check'></i>"
     else:
         return "<i class='fas fa-times'></i>"
+
+@register.filter
+def addtoday_totime(time_value):
+    current_date = datetime.date.today()
+    datetime_value = datetime.datetime.combine(current_date, time_value)
+    return datetime_value

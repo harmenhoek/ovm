@@ -4,14 +4,14 @@
 <form hx-post="{{ request.path }}">
     {% csrf_token %}
     <div class="modal-header">
-        Planning bevestigen
+        Porto {{ plan.porto.number }} afmelden
     </div>
     <div class="modal-body">
-        Weet je zeker dat je de planning wil bevestigen?
+        Weet je zeker dat je porto {{ plan.porto.number }} wil afmelden van {{ plan.user }}?
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
-        <button class="btn btn-remove-info" type="submit">Opslaan</button>
+        <button class="btn btn-danger" type="submit">Afmelden</button>
     </div>
 </form>
 

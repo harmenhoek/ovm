@@ -4,6 +4,7 @@ import datetime
 from django.template.defaultfilters import date, timesince
 from django.utils.translation import gettext
 import os
+import math
 
 @register.filter
 def checkifimage(value):
@@ -79,3 +80,18 @@ def addtoday_totime(time_value):
     current_date = datetime.date.today()
     datetime_value = datetime.datetime.combine(current_date, time_value)
     return datetime_value
+
+@register.filter
+def floor(value):
+    return math.floor(value)
+
+@register.filter
+def ceil(value):
+    return math.ceil(value)
+
+@register.filter
+def divide(value, arg):
+    try:
+        return float(value) / float(arg)
+    except (ValueError, ZeroDivisionError):
+        return ''

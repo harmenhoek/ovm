@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Post, Planning, ShiftTime
+from .models import Post, Planning, ShiftTime, Porto
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
@@ -22,6 +22,9 @@ import json
 from datetime import date
 import csv
 from django.shortcuts import redirect
+from django.db.models import Q
+from django.db.models import F, Q, Subquery, OuterRef, Value, CharField, DateTimeField, Min
+from django.db.models import Prefetch
 
 @method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
@@ -102,6 +105,7 @@ class PostListView(LoginRequiredMixin, ListView):
         context['current_post'] = Post.objects.filter(
             postslug=self.kwargs.get('postslug')).first()  # must first since no pk is used
 
+
         return context
 
 @staff_member_required
@@ -167,17 +171,34 @@ class PostMapView(LoginRequiredMixin, ListView):
         return context
 
 @method_decorator(staff_member_required, name='dispatch')
+class PortoView(LoginRequiredMixin, ListView):
+    model = Porto
+    template_name = 'central/portos.html'
+    context_object_name = 'portos'
+    ordering = ['number']
+
+    def get_queryset(self):
+        from datetime import date, datetime
+        datenow = date.today()
+
+        # Retrieve the queryset of Porto objects
+        queryset = super().get_queryset()
+
+        # Prefetch related Planning objects for each Porto
+        queryset = queryset.prefetch_related(
+            Prefetch('planning_set', queryset=Planning.objects.filter(confirmed=True, signed_off=False, date=datenow))
+        )
+
+        queryset = queryset.filter()
+        return queryset
+
+
+@method_decorator(staff_member_required, name='dispatch')
 class PostOccupationView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'central/post_occupation.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-postslug']
-
-    # def get_queryset(self):
-    #     from datetime import datetime, timedelta
-    #     from django.db.models import Count, F
-    #     datetimenow = datetime.now()
-    #     return Planning.objects.filter(shift__shiftstart__lt=datetimenow, shift__shiftend__lt=datetimenow).values('post').annotate(dcount=Count('post'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -190,17 +211,60 @@ class PostOccupationView(LoginRequiredMixin, ListView):
         context['current_post'] = Post.objects.filter(
             postslug=self.kwargs.get('postslug')).first()  # must first since no pk is used
 
-        occ_orange = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                             confirmed=True, signed_off=False, endtime__lt=datetimenow,
-                                             date=datenow).exclude(user=None)
-        occ_blue = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                           confirmed=False, signed_off=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
-                                           date=datenow).exclude(user=None)
-        occ_green = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False,
-                                            confirmed=True, signed_off=False, starttime__lt=datetimenow, endtime__gt=datetimenow,
-                                           date=datenow).exclude(user=None)
-        occ_white = Planning.objects.filter(post__postslug=self.kwargs.get('postslug'), removed=False, signed_off=False, user=None, external=True,
-                                            starttime__lt=datetimenow, endtime__gt=datetimenow, date=datenow)
+        occ_orange = Planning.objects.filter(
+            post__postslug=self.kwargs.get('postslug'),
+            removed=False,
+            confirmed=True,
+            signed_off=False,
+            endtime__lt=datetimenow,
+            date=datenow
+        ).exclude(
+            user=None
+        ).annotate(
+            primary_user=Subquery(
+                Porto.objects.filter(primary_user=OuterRef('user')).values('pk')[:1]
+            )
+        )
+        occ_blue = Planning.objects.filter(
+            post__postslug=self.kwargs.get('postslug'),
+            removed=False,
+            confirmed=False,
+            signed_off=False,
+            starttime__lt=datetimenow,
+            endtime__gt=datetimenow,
+            date=datenow
+        ).exclude(
+            user=None
+        ).annotate(
+            primary_user=Subquery(
+                Porto.objects.filter(primary_user=OuterRef('user')).values('pk')[:1]
+            )
+        )
+        occ_green = Planning.objects.filter(
+            post__postslug=self.kwargs.get('postslug'),
+            removed=False,
+            confirmed=True,
+            signed_off=False,
+            starttime__lt=datetimenow,
+            endtime__gt=datetimenow,
+            date=datenow
+        ).exclude(
+            user=None
+        ).annotate(
+            primary_user=Subquery(
+                Porto.objects.filter(primary_user=OuterRef('user')).values('pk')[:1]
+            )
+        )
+        occ_white = Planning.objects.filter(
+            post__postslug=self.kwargs.get('postslug'),
+            removed=False,
+            signed_off=False,
+            user=None,
+            external=True,
+            starttime__lt=datetimenow,
+            endtime__gt=datetimenow,
+            date=datenow
+        )
 
         from itertools import chain
         occ = list(chain(occ_orange, occ_blue, occ_green))
@@ -213,9 +277,11 @@ class PostOccupationView(LoginRequiredMixin, ListView):
         occ_color_external = [("default", "dark") for i in range(occ_white.count())]
         context['external_occupation'] = zip(list(chain(occ_white)), occ_color_external)
 
+
+
+
         if not occ and not occ_white:
             context['emptypost'] = True
-
 
         return context
 
@@ -226,6 +292,29 @@ class PostInfoView(LoginRequiredMixin, DetailView):
     slug_url_kwarg = 'postslug'
     slug_field = 'postslug'
     context_object_name = 'current_post'
+
+@staff_member_required
+def portos_remove(request, porto_pk):
+    plan_item = Planning.objects.get(porto=porto_pk)  # should only be one!!
+
+    if request.method == "POST":
+        from datetime import datetime
+        datetimenow = datetime.now()
+
+        porto_number = plan_item.porto.number
+        plan_item.porto = None
+        plan_item.porto_lastreturned = datetimenow
+        plan_item.save()
+        return HttpResponse(
+            status=204,
+            headers={
+                'HX-Trigger': json.dumps({
+                    "planningUpdated": None,
+                    "postmapUpdated": None,
+                    "showMessage": f"Porto <b>{porto_number}</b> afgemeld van <b>{plan_item.user}</b>."
+                })
+            })
+    return render(request, f"central/portoremove_form.html", {'plan': plan_item, })
 
 @staff_member_required
 def planning_approve(request, pk):
@@ -256,6 +345,7 @@ def planning_signoff(request, pk):
         plan_item.signed_off_by = request.user
         from datetime import datetime
         plan_item.signed_off_time = datetime.now()
+        plan_item.porto = False  # remove porto
         plan_item.save()
 
         return HttpResponse(
@@ -334,6 +424,7 @@ def planning_remove(request, pk):
                 plan_item.save()
         else:
             plan_item.removed = True
+            plan_item.porto = None  # also remove the porto from the post
             plan_item.removed_by = request.user
             plan_item.save()
 

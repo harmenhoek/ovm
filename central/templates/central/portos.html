@@ -1,0 +1,39 @@
+{% load static %}
+{% load humanize %}
+
+<script src="{% static "central/load_tooltips.js" %}" crossorigin="anonymous"></script>
+
+<div class="row">
+    <div class="col-4">
+        {% with items_per_column=portos|length|divide:3|ceil %}
+
+        {% for porto in portos %}
+            {% if porto.primary_user %}
+                <span class="text-muted"><span class="badge rounded-pill  {% if porto.flag %}bg-danger{% else %}bg-success{% endif %}">{{ porto.number }}</span> {{ porto.primary_user }} (vast) </span>
+            {% else %}
+                {% if porto.planning_set.first.user %}
+                    <span class="badge rounded-pill  {% if porto.flag %}bg-danger{% else %}bg-success{% endif %}">{{ porto.number }}</span> {{ porto.planning_set.first.user }} (<a hx-get="{% url 'post-info' porto.planning_set.first.post %}" hx-trigger="click" hx-target="#postinfo" style="cursor: pointer;">post {{ porto.planning_set.first.post.post_fullname }}</a>)
+                    <i portos-remove class="fas fa-phone-slash" style="cursor: pointer;" hx-get="{% url 'portos-remove' porto.pk %}" data-bs-toggle="tooltip" data-bs-placement="top" title="Porto afmelden" hx-target="#dialoghtmx"></i>
+                {% else %}
+                    <span class="badge rounded-pill {% if porto.flag %}bg-danger{% else %}bg-secondary{% endif %}">{{ porto.number }}</span>
+                {% endif %}
+            {% endif %}
+
+            {% if porto.flag %}
+                 <span class="text-danger"> (<i class="fas fa-flag"></i> {{ porto.flag|safe|lower }})</span>
+            {% endif %}
+
+            <br>
+            {% if forloop.counter|divisibleby:items_per_column %}
+{#            {% if forloop.counter % 4 == 0 %}#}
+
+
+                </div>
+                <div class="col-4">
+            {% endif %}
+
+        {% endfor %}
+    {% endwith %}
+    </div>
+</div>
+

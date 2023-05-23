@@ -84,6 +84,11 @@
 {#                                    {% endfor %}#}
 {#                                {% endif %}#}
                                 {% if occ.comment %}<p class="small m-0"><i class="far fa-sticky-note" data-bs-toggle="tooltip" data-bs-placement="right" title="Planningsnotities"></i> {{ occ.comment }} <br></p>{% endif %}
+                                {% if occ.primary_user is not None %}
+                                     <p class="small m-0"><i class="fas fa-phone-volume" data-bs-toggle="tooltip" data-bs-placement="right" title="Portofoon nummer"></i> {{ occ.primary_user }} (vaste porto)</p>
+                                {% elif occ.porto %}
+                                    <p class="small m-0"><i class="fas fa-phone-volume" data-bs-toggle="tooltip" data-bs-placement="right" title="Portofoon nummer"></i> {{ occ.porto }}</p>
+                                {% endif %}
                                 {% if occ.bike %}<p class="small m-0"><i class="fas fa-bicycle" data-bs-toggle="tooltip" data-bs-placement="right" title="Leenfiets nummer"></i> {{ occ.bike }}</p>{% endif %}
 
 

@@ -87,17 +87,21 @@ active
         </div> <!-- <div class="card mb-2"> -->
 
 
-<!--        <div class="row">-->
-<!--            <div class="col-3">-->
-<!--                <div class="card mb-2">-->
-<!--                    <h5 class="card-header">Volgende shift</h5>-->
-<!--                    <div class="card-body d-flex justify-content-center">-->
-<!--                        <span class="badge bg-warning text-dark"><h3> <b>21</b>  minuten</h3></span>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-2">
+                    <h5 class="card-header">Portofoons</h5>
+                    <div class="card-body ">
+                        <div hx-get="{% url 'portos' %}" hx-trigger="load, every 30s, postmapUpdated from:body"></div>
+
+                        {{ test }}
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div> <!-- <div class="col-lg-9"> -->
-</div>
+</div> <!-- row -->
+
 
 {% endblock content %}

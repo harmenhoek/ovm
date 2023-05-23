@@ -8,6 +8,7 @@ from .views import (
     PostMapView,
     PostOccupationView,
     PostInfoView,
+    PortoView,
     # PlanningModify
 )
 from . import views
@@ -16,6 +17,8 @@ urlpatterns = [
     path('', PostListView.as_view(), name='central-home'),
     path('post/<slug:postslug>/', PostListView.as_view(), name='post-detail'),
     path('post_map/', PostMapView.as_view(), name='post-map'),
+    path('portos/', PortoView.as_view(), name='portos'),
+    path('portos/<int:porto_pk>/remove/', views.portos_remove, name='portos-remove'),
     path('post_info/<slug:postslug>/', PostInfoView.as_view(), name='post-info'),
     path('post_occupation/<slug:postslug>/', PostOccupationView.as_view(), name='post-occupation'),
     path('about/', views.about, name='central-about'),

@@ -1,10 +1,11 @@
 from django import forms
-from .models import Planning, ShiftTime, ShiftDay
+from .models import Planning, ShiftTime, ShiftDay, Porto
 # from django.forms.models import inlineformset_factory
 from .widgets import DatePickerInput, TimePickerInput, DateTimePickerInput
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.core.exceptions import ValidationError
-
+from django.db.models import Q
+from django.utils import timezone
 
 IMPORT_CHOICES = (
     ("posts", "Posts"),
@@ -29,10 +30,7 @@ class ModifyPlanningDashboard(forms.ModelForm):
         datetimenow = datetime.now()
         datenow = date.today()
         user = self.cleaned_data['user']
-        # from django.db.models import Q
-        # User.objects.filter(Q(income__gte=5000) | Q(income__isnull=True))
 
-        from .models import Planning
         plan = Planning.objects.filter(user=user,
                                 starttime__lt=datetimenow,
                                 endtime__gt=datetimenow,
@@ -50,6 +48,25 @@ class ModifyPlanningDashboard(forms.ModelForm):
             raise ValidationError('Geselecteerde tijd ligt niet in de toekomst.')
         return endtime
 
+    def clean_porto(self):
+        porto = self.cleaned_data['porto']
+        import logging
+        logging.warning(f"{porto=}")
+
+        if porto is not None:
+            primary_user = Porto.objects.filter(primary_user__isnull=False)
+            if not primary_user:
+                raise ValidationError(f"Porto {porto.number} is de vaste porto van {porto.primary_user}.")
+
+            from datetime import date
+            datenow = date.today()
+            plan = Planning.objects.filter(porto=porto, date=datenow, signed_off=False)
+            import logging
+            logging.warning(f"{plan=}")
+            if plan:
+                raise ValidationError(f"Porto {porto.number} is al in gebruik door {plan[0].user.first_name} {plan[0].user.last_name} op post {plan[0].post.postslug}.")
+        return porto
+
     def clean(self):
         cleaned_data = super().clean()
         endtime = cleaned_data.get('endtime')
@@ -59,25 +76,42 @@ class ModifyPlanningDashboard(forms.ModelForm):
             if endtime < starttime:
                 raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
+        # check whether user is primary_user of a porto
+        user_field = cleaned_data.get('user')
+        porto_field = cleaned_data.get('porto')
+        try:
+            porto = Porto.objects.get(primary_user=user_field)
+        except Porto.DoesNotExist:
+            porto = None
+        if porto_field and porto:
+            self.add_error('porto',
+                           ValidationError(
+                               f"{user_field} heeft een eigen porto. Je kunt niet nog een porto toevoegen."))
+
+        return cleaned_data
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['endtime'].required = True
         self.fields['user'].required = True
+
+        # modify the porto dropdowns to include current user / primary_user
+        porto_field = self.fields['porto']
+        porto_field.label_from_instance = self.get_porto_label
+
+    def get_porto_label(self, porto):
+        planning = porto.planning_set.first()
+        if porto.primary_user:
+            return f'{porto.number} - {porto.primary_user} (vaste porto)'
+        elif planning:
+            return f'{porto.number} - {planning.user} (post {planning.post})'
+        return porto.number
 
 
 
 
 class AddPlanningDashboard(forms.ModelForm):
     # its actually just occupation that is added, not planning
-
-    # from users.models import CustomUser
-    # from django.forms import ModelChoiceField
-    # from datetime import datetime, date
-    # datetimenow = datetime.now()
-    # datenow = date.today()
-    # user = ModelChoiceField(queryset=CustomUser.objects.exclude(planning__shift__shiftstart__lt=datetimenow,
-    #                                                              planning__shift__shiftend__gt=datetimenow,
-    #                                                              planning__shift__date__date=datenow), disabled=True)
 
     slider = forms.Field(label='')
 
@@ -92,8 +126,6 @@ class AddPlanningDashboard(forms.ModelForm):
         datetimenow = datetime.now()
         datenow = date.today()
         user = self.cleaned_data['user']
-        # from django.db.models import Q
-        # User.objects.filter(Q(income__gte=5000) | Q(income__isnull=True))
 
         from .models import Planning
         plan = Planning.objects.filter(user=user,
@@ -112,6 +144,25 @@ class AddPlanningDashboard(forms.ModelForm):
             raise ValidationError('Geselecteerde tijd ligt niet in de toekomst.')
         return endtime
 
+    def clean_porto(self):
+        porto = self.cleaned_data['porto']
+        import logging
+        logging.warning(f"{porto=}")
+
+        if porto is not None:
+            primary_user = Porto.objects.filter(primary_user__isnull=False)
+            if not primary_user:
+                raise ValidationError(f"Porto {porto.number} is de vaste porto van {porto.primary_user}.")
+
+            from datetime import date
+            datenow = date.today()
+            plan = Planning.objects.filter(porto=porto, date=datenow, signed_off=False)
+            import logging
+            logging.warning(f"{plan=}")
+            if plan:
+                raise ValidationError(f"Porto {porto.number} is al in gebruik door {plan[0].user.first_name} {plan[0].user.last_name} op post {plan[0].post.postslug}.")
+        return porto
+
     def clean(self):
         cleaned_data = super().clean()
         endtime = cleaned_data.get('endtime')
@@ -119,6 +170,17 @@ class AddPlanningDashboard(forms.ModelForm):
         # check if endtime > starttime
         if endtime < starttime:
             raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
+
+        # check whether user is primary_user of a porto
+        user_field = cleaned_data.get('user')
+        porto_field = cleaned_data.get('porto')
+        try:
+            porto = Porto.objects.get(primary_user=user_field)
+        except Porto.DoesNotExist:
+            porto = None
+        if porto_field and porto:
+            self.add_error('porto',
+                           ValidationError(f"{user_field} heeft een eigen porto. Je kunt niet nog een porto toevoegen."))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -146,17 +208,13 @@ class AddPlanningDashboard(forms.ModelForm):
             'style': 'width:100%',
         })
 
+        porto_field = self.fields['porto']
+        porto_field.label_from_instance = self.get_porto_label
 
-    # def __init__(self, *args, **kwargs):
-    #     super(AddPlanningDashboard, self).__init__(*args, **kwargs)
-    #
-    #
-    #     from datetime import datetime, timedelta, date
-    #     datetimenow = datetime.now()
-    #     datenow = date.today()
-    #
-    #     from users.models import CustomUser
-    #     self.fields['user'].queryset = CustomUser.objects.exclude(planning__shift__shiftstart__lt=datetimenow,
-    #                                                              planning__shift__shiftend__gt=datetimenow,
-    #                                                              planning__shift__date__date=datenow)
-
+    def get_porto_label(self, porto):
+        planning = porto.planning_set.first()
+        if porto.primary_user:
+            return f'{porto.number} - {porto.primary_user} (vaste porto)'
+        elif planning:
+            return f'{porto.number} - {planning.user} (post {planning.post})'
+        return porto.number

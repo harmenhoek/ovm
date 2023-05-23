@@ -12,7 +12,8 @@ class Flag(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.flag
+        # return f"<i class='{self.icon}'></i> {self.flag}"
+        return f"{self.flag}"
 
 
 class Sector(models.Model):
@@ -53,6 +54,7 @@ class ShiftDay(models.Model):
     dayname = models.SlugField(max_length=15, verbose_name="Dag")
     active = models.BooleanField(default=True)
     description = models.TextField(null=True, blank=True, verbose_name="Extra info dag")
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.dayname} ({self.date})"
@@ -68,6 +70,21 @@ class ShiftTime(models.Model):
     def __str__(self):
         return f"Shift {self.timename} ({self.timestart} - {self.timeend})"
 
+class Porto(models.Model):
+    number = models.IntegerField(null=False, unique=True, blank=True, verbose_name='Nummmer')
+    name = models.CharField(null=True, blank=True, max_length=100, verbose_name="Naam")
+    active = models.BooleanField(default=True, verbose_name='Actief')
+    notes = models.TextField(null=True, blank=True, verbose_name="Notities")
+    primary_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Hoofdgebruiker (hele weekend)')
+    flag = models.ForeignKey(Flag, on_delete=models.SET_NULL, null=True, blank=True)
+    flag_comment = models.CharField(max_length=100, null=True, blank=True)
+    history = HistoricalRecords()
+
+    def __str__(self):
+        if self.primary_user is not None:
+            return f"{self.number} - {self.primary_user} (vaste porto)"
+        else:
+            return f"{self.number}"
 
 class Planning(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='Post')
@@ -86,7 +103,8 @@ class Planning(models.Model):
     signed_off_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='signed_of_by')
     copy_of = models.IntegerField(null=True, blank=True)
     external = models.BooleanField(default=False, verbose_name='Externe verkeersregelaar', help_text='Kan op meerdere posten staan en wordt automatisch bevestigd en afgemeld van post.')
-    porto = models.BooleanField(default=False, verbose_name="Portofoon")
+    porto = models.ForeignKey(Porto, default=0, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Porto')
+    porto_lastreturned = models.DateTimeField(null=True, blank=True, verbose_name='Porto laatst teruggebracht')
     bike = models.CharField(null=True, blank=True, max_length=100, verbose_name="Fietsnummer")
     history = HistoricalRecords()
 

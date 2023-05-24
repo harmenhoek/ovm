@@ -103,7 +103,7 @@ class Planning(models.Model):
     signed_off_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='signed_of_by')
     copy_of = models.IntegerField(null=True, blank=True)
     external = models.BooleanField(default=False, verbose_name='Externe verkeersregelaar', help_text='Kan op meerdere posten staan en wordt automatisch bevestigd en afgemeld van post.')
-    porto = models.ForeignKey(Porto, default=0, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Porto')
+    porto = models.ForeignKey(Porto, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Porto')
     porto_lastreturned = models.DateTimeField(null=True, blank=True, verbose_name='Porto laatst teruggebracht')
     bike = models.CharField(null=True, blank=True, max_length=100, verbose_name="Fietsnummer")
     history = HistoricalRecords()

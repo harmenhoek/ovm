@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     'simple_history',
     'mobiledetect',
+    'import_export',
 ]
 
 MIDDLEWARE = [

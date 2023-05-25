@@ -420,6 +420,7 @@ def ArrayToTable(planning, postname, postpk, LUT, dayname, rowcolor):
                 porto = " <i class='fas fa-phone-volume'></i>" if details.porto else ""
                 bike = f" <i class='fas fa-bicycle'></i><span style='font-size:0.7em;'> {details.bike}</span>" if details.bike else ""
 
+                logging.warning(f">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {details.starttime <= datetime.datetime.now().time() and details.date == datetime.datetime.now().date()}")
 
                 if not details.external and not details.user:  # than planning
                     html += f"<td colspan='{spans[idx]}' class='cutoverflow text-muted' style='background-color: #da9b4e; cursor:pointer;' hx-get='{url}' hx-target='#dialoghtmx'><i>Vacant{bike}{porto} {comment}</i></td>"

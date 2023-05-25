@@ -26,6 +26,7 @@ from django.db.models import Q
 from django.db.models import F, Q, Subquery, OuterRef, Value, CharField, DateTimeField, Min
 from django.db.models import Prefetch
 
+
 @method_decorator(staff_member_required, name='dispatch')
 class UsersView(LoginRequiredMixin, ListView):
     model = get_user_model()

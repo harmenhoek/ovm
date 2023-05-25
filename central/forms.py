@@ -61,10 +61,13 @@ class ModifyPlanningDashboard(forms.ModelForm):
             from datetime import date
             datenow = date.today()
             plan = Planning.objects.filter(porto=porto, date=datenow, signed_off=False)
-            import logging
-            logging.warning(f"{plan=}")
+            # import logging
+            # logging.warning(f"{plan=}")
+
             if plan:
-                raise ValidationError(f"Porto {porto.number} is al in gebruik door {plan[0].user.first_name} {plan[0].user.last_name} op post {plan[0].post.postslug}.")
+                current_form_id = self.instance.id  # Get id of current plan.
+                if plan[0].id != current_form_id:
+                    raise ValidationError(f"Porto {porto.number} is al in gebruik door {plan[0].user.first_name} {plan[0].user.last_name} op post {plan[0].post.postslug}.")
         return porto
 
     def clean(self):

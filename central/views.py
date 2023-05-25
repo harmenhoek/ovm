@@ -345,7 +345,7 @@ def planning_signoff(request, pk):
         plan_item.signed_off_by = request.user
         from datetime import datetime
         plan_item.signed_off_time = datetime.now()
-        plan_item.porto = False  # remove porto
+        plan_item.porto = None  # remove porto
         plan_item.save()
 
         return HttpResponse(

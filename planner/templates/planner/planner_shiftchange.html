@@ -68,7 +68,7 @@ Shift wissel {{ dayname|lower }} shift {{ timename }} ({{ timestart|date:"H:i" }
 
 {% for sector, post_dict in occupation_total_grouped.items %} -------- {{ sector }}  --------
 {% for post, results in post_dict.items %} || {{ post }} ||
-{% for plan in results %}    {% if plan.shift_type == 'new' %}  + {% elif plan.shift_type == 'change' %}  < {% elif plan.shift_type == 'changerev' %}  > {% elif plan.shift_type == 'cancel' %} x {% endif %} {{ plan.post }} - {{ plan.user.first_name }} {{ plan.user.last_name }} {% if not plan.confirmed and plan.shift_type != 'new' %}(nooit bevestigd op post) {% endif %}({{ plan.starttime|time:"H:i" }} - {{ plan.endtime|time:"H:i" }}) {% if plan.comment %}- {{ plan.comment }}{% endif %}{% if plan.post_id_old %}(komt van {{ plan.post_id_old }}) {% endif %}{% if plan.post_id_new %}(gaat naar {{ plan.post_id_new }}){% endif %}{% if plan.later_today %}(later shift vandaag om {{ plan.later_today|time:"H:i" }}) {% endif %}
+{% for plan in results %}    {% if plan.shift_type == 'new' %}  + {% elif plan.shift_type == 'change' %}  < {% elif plan.shift_type == 'changerev' %}  > {% elif plan.shift_type == 'cancel' %} - {% endif %} {{ plan.post }} - {{ plan.user.first_name }} {{ plan.user.last_name }} {% if not plan.confirmed and plan.shift_type != 'new' %}(nooit bevestigd op post) {% endif %}({{ plan.starttime|time:"H:i" }} - {{ plan.endtime|time:"H:i" }}) {% if plan.comment %}- {{ plan.comment }}{% endif %}{% if plan.post_id_old %}(komt van {{ plan.post_id_old }}) {% endif %}{% if plan.post_id_new %}(gaat naar {{ plan.post_id_new }}){% endif %}{% if plan.later_today %}(later shift vandaag om {{ plan.later_today|time:"H:i" }}) {% endif %}
 {% endfor %}
 {% endfor %}
 {% endfor %}

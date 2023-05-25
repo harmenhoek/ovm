@@ -43,7 +43,8 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         datenow = date.today()
-        context['planning'] = Planning.objects.filter(user=self.object.pk, removed=False, date__gte=datenow)
+        context['planning'] = Planning.objects.filter(user=self.object.pk, removed=False, date__gte=datenow).order_by(
+            'date')
 
         return context
 

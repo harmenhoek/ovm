@@ -27,17 +27,17 @@ import datetime
 def get_logs(dayname):
     if dayname == "all" or (dayname is None and not ShiftDay.objects.filter(active=True, date=date.today())):
         # show all days when: day=all, or when no day is passed and current date is not one of the Shiftdays
-        logs = Log.objects.filter(deleted=False)
+        logs = Log.objects.filter(deleted=False).order_by('-added_on')
         dayname = 'all'
     elif dayname is not None:
         # exact day is passed
         daydate = ShiftDay.objects.get(active=True, dayname__iexact=dayname).date
-        logs = Log.objects.filter(deleted=False, added_on__date=daydate)
+        logs = Log.objects.filter(deleted=False, added_on__date=daydate).order_by('-added_on')
     elif ShiftDay.objects.filter(active=True, date=date.today()):
         # no day is passed (condition automatically agreed) and current date is one of ShiftDays
         daydate = ShiftDay.objects.get(active=True, date=date.today()).date
         dayname = ShiftDay.objects.get(active=True, date=date.today()).dayname
-        logs = Log.objects.filter(deleted=False, added_on=daydate)
+        logs = Log.objects.filter(deleted=False, added_on=daydate).order_by('-added_on')
     else:
         # dayname is none and today is not in days, get first day
         daydate = ShiftDay.objects.filter(active=True, dayname__iexact=dayname)[0].date

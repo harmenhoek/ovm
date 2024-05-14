@@ -1,5 +1,5 @@
 from django import forms
-from central.models import Planning, ShiftTime, ShiftDay
+from central.models import Planning, ShiftTime, ShiftDay, Post
 from central.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput
 from datetime import datetime, date
 from django.core.exceptions import ValidationError
@@ -37,6 +37,8 @@ class ModifyPlanningPlanner(forms.ModelForm):
         self.fields['starttime'].required = True
         self.fields['endtime'].required = True
         self.fields['user'].required = True
+        # Filter the post field so that only active posts are shown
+        self.fields['post'].queryset = Post.objects.filter(active=True)
 
 
 
@@ -102,6 +104,8 @@ class AddPlanningPlanner(forms.ModelForm):
             'data-slider-tooltip': "hide",
             'style': 'width:100%',
         })
+        # Filter the post field so that only active posts are shown
+        self.fields['post'].queryset = Post.objects.filter(active=True)
 
 
 
@@ -176,3 +180,5 @@ class AddOccupationPlanner(forms.ModelForm):
             'data-slider-tooltip': "hide",
             'style': 'width:100%',
         })
+        # Filter the post field so that only active posts are shown
+        self.fields['post'].queryset = Post.objects.filter(active=True)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Planning, ShiftTime, ShiftDay, Porto
+from .models import Planning, ShiftTime, ShiftDay, Porto, Post
 # from django.forms.models import inlineformset_factory
 from .widgets import DatePickerInput, TimePickerInput, DateTimePickerInput
 from datetime import datetime, date, timedelta
@@ -97,6 +97,8 @@ class ModifyPlanningDashboard(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['endtime'].required = True
         self.fields['user'].required = True
+        # Filter the post field so that only active posts are shown
+        self.fields['post'].queryset = Post.objects.filter(active=True)
 
         # modify the porto dropdowns to include current user / primary_user
         porto_field = self.fields['porto']
@@ -210,6 +212,9 @@ class AddPlanningDashboard(forms.ModelForm):
             'data-slider-tooltip': "hide",
             'style': 'width:100%',
         })
+
+        # Filter the post field so that only active posts are shown
+        self.fields['post'].queryset = Post.objects.filter(active=True)
 
         porto_field = self.fields['porto']
         porto_field.label_from_instance = self.get_porto_label

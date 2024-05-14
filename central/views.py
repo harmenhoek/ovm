@@ -94,6 +94,10 @@ class PostListView(LoginRequiredMixin, ListView):
     context_object_name = 'posts'
     ordering = ['-postslug']
 
+    def get_queryset(self):
+        # Filter the queryset to only include active posts
+        return Post.objects.filter(active=True)
+
     def get(self, request, *args, **kwargs):
         if request.device['is_mobile']:
             return redirect("logbook")
@@ -130,6 +134,10 @@ class PostMapView(LoginRequiredMixin, ListView):
     template_name = 'central/post_map.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-postslug']
+
+    def get_queryset(self):
+        # Filter the queryset to only include active posts
+        return Post.objects.filter(active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

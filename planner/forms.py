@@ -44,46 +44,32 @@ class ModifyPlanningPlanner(forms.ModelForm):
 
 
 
-class AddPlanningPlanner(forms.ModelForm):
 
+
+class AddPlanningPlanner(forms.ModelForm):
     slider = forms.Field(label='')
 
     class Meta:
         model = Planning
-        # post = forms.ModelChoiceField(queryset=Planning.objects.values('post').order_by('-post__post_fullname'))
         fields = ['post', 'date', 'slider', 'starttime', 'endtime', 'comment', 'external']
-
-
-        options = ShiftDay.objects.filter(active=True).order_by('date')
-        CHOICES = ((x.date, x.dayname) for x in options)
-
         widgets = {
             'starttime': TimePickerInput(),
             'endtime': TimePickerInput(),
-            'date': forms.Select(choices=CHOICES),
         }
-
-    def clean(self, *args, **kwargs):
-        cleaned_data = super().clean(*args, **kwargs)
-        endtime = cleaned_data.get('endtime')
-        starttime = cleaned_data.get('starttime')
-        # check if endtime > starttime
-        if endtime < starttime:
-            raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['post'].queryset = self.fields['post'].queryset.order_by('post_fullname')  # sort option list (remaining help text, etc)
-
-        # datenow = date.today()
-        # if ShiftDay.objects.filter(date=datenow):  # if current day is a Shiftday, make sure this one is initiall selected.
-        #     self.fields['date'].initial = (ShiftDay.objects.filter(date=datenow)[0].date, ShiftDay.objects.filter(date=datenow)[0].dayname)
-
+        self.fields['post'].queryset = self.fields['post'].queryset.order_by('post_fullname')
         self.fields['starttime'].required = True
         self.fields['endtime'].required = True
         self.fields['slider'].required = False
         self.fields['date'].required = True
+
+        # Set date choices dynamically here
+        options = ShiftDay.objects.filter(active=True).order_by('date')
+        self.fields['date'].widget = forms.Select(choices=[(x.date, x.dayname) for x in options])
+
         self.fields['starttime'].widget.attrs.update({
             'id': 'starttime',
         })
@@ -106,6 +92,13 @@ class AddPlanningPlanner(forms.ModelForm):
         })
         # Filter the post field so that only active posts are shown
         self.fields['post'].queryset = Post.objects.filter(active=True)
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super().clean(*args, **kwargs)
+        endtime = cleaned_data.get('endtime')
+        starttime = cleaned_data.get('starttime')
+        if endtime < starttime:
+            raise ValidationError('De eindtijd moet voorbij de begintijd liggen.')
 
 
 
